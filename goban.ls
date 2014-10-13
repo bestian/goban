@@ -138,8 +138,19 @@ myGoban = ($http, $sce, $gobanPath, $gobanTitle, $hash, $gobanMax, $timeout)->
 		goban.trust((goban.data[goban.myJ] && goban.data[goban.myJ].url) or (goban.data[goban.myJ+1] && goban.data[goban.myJ+1].url))
 
 	goban.backupAll = !->
+
+		downloadURL = (url,k) ->
+			hiddenIFrameID = 'hiddenDownloader' + k
+			iframe = document.getElementById(hiddenIFrameID)
+			if iframe === null
+				iframe = document.createElement('iframe')
+				iframe.id = hiddenIFrameID
+				iframe.name = url
+				iframe.style.display = 'none'
+				document.body.appendChild(iframe)
+			iframe.src = url
 		for i in [to $gobanMax]
-			window.open $gobanPath+$gobanTitle+i+'.csv'  \_blank "width=0, height=0, titlebar=no, toolbar=no"
+			downloadURL($gobanPath + $gobanTitle + i + \.csv, i)	      
 
 	goban
 
