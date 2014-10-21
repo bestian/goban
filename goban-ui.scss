@@ -1,0 +1,277 @@
+
+@import "compass/CSS3";
+
+
+$side : 15%;
+$frameHeight: 600px;
+$nav : 50px;
+$nav-bg-color : hsla(0,0%,18%,1);
+
+
+a {	
+	cursor:pointer;
+	text-decoration:none;
+}
+
+#goban-nav {
+	position: relative;
+	z-index:999999;
+	height: $nav;
+	padding-top: 15px;
+	padding-left: 15px;
+	font-size: 24px;
+	background-color: $nav-bg-color;
+	a {
+		color: white;
+	}
+	sub {
+		color: white;
+	}
+	ul {
+		list-style-type: none;
+		font-family: cursive, sen-seirf, arial;
+
+		.number {		
+			display:inline-block;
+			font-family: "times new roman", sen-seirf, arial;
+			margin-left:15px;
+			@include transform(skewX(-15deg));
+			
+		}
+		li {
+			display: inline;
+			padding: 1%;
+			a {
+				$w: 15px;
+				display: inline-block;
+				width: $w;
+				height: $w;
+				margin-left: 1%;
+				padding: 3px;
+				@include border-radius(50%);
+				border: 3px solid gray;
+				text-decoration: none;
+				&:hover, &:active, &.active {
+					background-color: mix(black,gray);
+				}
+			}	
+		}
+	}
+}
+
+
+.goban-logo {
+	display: inline-block;
+	height:50px;
+}
+
+.goban-fixed-right {
+	position: fixed;
+	top: 5px;
+	right:15px;
+}
+
+.goban-blank {
+	position: absolute;
+	z-index: 3;
+	top: 70px;
+	left: 50%;
+	opacity: 0.8;
+	a {
+		$a: 150px;
+		$h: 20px;
+		padding:15px;
+		margin-left: -$a / 2;
+		height: $h;
+		font-size:$h;
+		background-color: white;
+		@include border-radius(0px 0px 50% 50%);
+	}
+}
+
+#goban-toggleSidebar {
+	display: inline-block;
+	width:30px;
+	height:30px;
+	line-height:0px;
+	span {
+		display: inline-block;
+		width:22px;
+		height:0px;
+		border-top: 4px solid gray;
+		@include border-radius(5px);
+	}
+}
+
+
+#goban-keyBordCtrl {
+    $backup : 100px;
+	$up: 15px;
+	position:fixed;
+	bottom:0px;
+	right:0px;
+	z-index:1;
+	width: 150px;
+	height: 150px;
+	padding: $up;
+	#backup {
+		vertical-align:middle;
+		text-align:center;
+		line-height:$backup;
+		@include border-radius(50%);
+		background-color:cyan;
+		width: $backup;
+		height: $backup;
+		a {
+			display: inline-block;
+			position: relative;
+			top: $up*1.5;
+			border-top: $up*3 solid mix(white, cyan);
+			border-right: $up*2 solid transparent;
+			border-left: $up*2 solid transparent;
+			&:hover {			
+				border-top: $up*3 solid mix(black, cyan);
+			}				
+		}
+		
+
+	}
+
+	#up,#down {
+		position:absolute;
+		left: $backup / 2 - $up;
+		border-right: $up*2 solid transparent;
+		border-left: $up*2 solid transparent;
+		width: 0px;
+	}
+	#up {
+		top: -$up / 2;
+		border-bottom: $up solid cyan;
+		&:hover {			
+			border-bottom: $up solid mix(black, cyan);
+		}
+	}
+	#down {
+		top: $backup  + $up*1.5;
+		border-top: $up solid cyan;
+		&:hover {			
+			border-top: $up solid mix(black, cyan);
+		}
+	}
+	#left,#right {
+		position:absolute;
+		top: $backup / 2 - $up;
+		width: 0px;		
+		border-top: $up*2 solid transparent;
+		border-bottom: $up*2 solid transparent;
+	}
+	#left {
+		left: -$up / 2;
+		border-right: $up solid cyan;
+		&:hover {			
+			border-right: $up solid mix(black, cyan);
+		}
+	}
+	#right {
+		left: $backup  + $up *1.5;
+		border-left: $up solid cyan;
+		&:hover {			
+			border-left: $up solid mix(black, cyan);
+		}
+	}
+}
+
+#goban-side, #goban-main {
+	@include transition(width 0.2s ease);
+}
+
+#goban-side {
+	@include box-sizing(border-box);
+	width: $side;
+	float:left;
+	height: $frameHeight;	
+	overflow-x: hidden;
+	overflow-y: auto;
+	margin-top : 12px;
+
+	#goban-sectionTitle {
+		margin-left: 15px;
+	}
+	
+	ul {
+		margin-left : 10%;	
+		li {
+			margin-top : 10px;
+			width: 80%;
+			a {
+				$w: 18px;
+				$p: 3px;
+				display:inline-block;
+				padding-top: $p;
+				padding-left: $p*5;
+				width: $w * 7;
+				overflow:hidden;
+				font-size: $w;
+				line-height: 120%;
+				text-decoration: none;
+				@include transition(height 2s ease);
+				&:hover, &:active {
+					$b: 5px;
+					padding-left: $p*5 - $b;
+					border-left: $b solid mix(black,cyan);
+				}
+				&.active {
+					background-color:  $nav-bg-color;
+					color: darken(white,10%);
+				}
+				&.elem {
+					margin-left:15px;
+				}
+				img{
+					margin-right:5px;
+					&.folder {
+						height:15px;
+					}
+				}
+				.arrowHead{
+					$a: 6px;
+					display:inline-block;
+					width:0px;
+					position:relative;
+					top: -$a / 2;
+					left: $a * 2;
+					&.right{
+						border-left: $a solid black;
+						border-top: $a solid transparent;
+						border-bottom: $a solid transparent;						
+					}
+					&.down{
+						border-top: $a solid black;
+						border-left: $a solid transparent;
+						border-right: $a solid transparent;	
+					}
+				}
+
+			}			
+		}
+	}
+}
+
+#goban-main {
+	width: 100% - $side;
+	height: $frameHeight;
+	float:right;
+	iframe {
+		width: 100%;
+		height: 100%;
+		$f : hsla(0,50%,95%,1);
+		background:url(../images/tiles.png);
+		@include transition(opacity 2s ease);
+		&.null,&.loading {
+			@include transition(opacity 0.5s ease);
+			opacity: 0;
+			z-index: -5;
+		}
+	}
+}
+

@@ -27,6 +27,7 @@
     parseFromCSV = function(csv){
       var allTextLines, bodyLines, goodList, lastFolder, bestList;
       allTextLines = csv.split(/\r\n|\n/);
+      goban.sectionTitle = allTextLines[1].split(',')[1];
       bodyLines = allTextLines.slice(2);
       goodList = bodyLines.map(function(text){
         return text.split(',');

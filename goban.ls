@@ -14,6 +14,8 @@ myGoban = ($http, $sce, $gobanPath, $gobanTitle, $hash, $gobanMax, $timeout)->
 
 	parseFromCSV = (csv) ->
 		allTextLines = csv.split(/\r\n|\n/)
+		goban.sectionTitle = allTextLines[1].split(',')[1]
+
 		bodyLines = allTextLines.slice(2)
 		goodList = bodyLines
 					.map (text) -> text.split \,
@@ -71,7 +73,6 @@ myGoban = ($http, $sce, $gobanPath, $gobanTitle, $hash, $gobanMax, $timeout)->
 
 
 	goban.load = (num) !->
-
 		folderName = $gobanTitle + num
 		if typeof goban.folderNames == \array
 			folderName = goban.folderNames[num]
@@ -79,7 +80,6 @@ myGoban = ($http, $sce, $gobanPath, $gobanTitle, $hash, $gobanMax, $timeout)->
 		$http {method: "GET",url: $gobanPath + folderName + '.csv',dataType: "text"}
 				.success (data) ->
 					goban.data = parseFromCSV data
-
 
 
 	goban.keyDown = ($event) !->
@@ -138,7 +138,6 @@ myGoban = ($http, $sce, $gobanPath, $gobanTitle, $hash, $gobanMax, $timeout)->
 		goban.trust((goban.data[goban.myJ] && goban.data[goban.myJ].url) or (goban.data[goban.myJ+1] && goban.data[goban.myJ+1].url))
 
 	goban.backupAll = !->
-
 		downloadURL = (url,k) ->
 			hiddenIFrameID = 'hiddenDownloader' + k
 			iframe = document.getElementById(hiddenIFrameID)
