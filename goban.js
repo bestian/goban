@@ -30,7 +30,10 @@
       goban.sectionTitle = allTextLines[1].split(',')[1];
       bodyLines = allTextLines.slice(2);
       goodList = bodyLines.map(function(text){
-        return text.split(',');
+        text = text.replace(/"(\s?http)(.*)"/g, '$1' + RegExp.$2.replace(/,/g, 'COMMA'));
+        return text.split(',').map(function(str){
+          return str.replace(/COMMA/g, ',');
+        });
       }).filter(function(list){
         return list[1];
       });

@@ -16,9 +16,15 @@ myGoban = ($http, $sce, $gobanPath, $gobanTitle, $hash, $gobanMax, $timeout)->
 		allTextLines = csv.split(/\r\n|\n/)
 		goban.sectionTitle = allTextLines[1].split(',')[1]
 
+
 		bodyLines = allTextLines.slice(2)
+
 		goodList = bodyLines
-					.map (text) -> text.split \,
+					.map (text) -> 
+						text = text.replace(/"(\s?http)(.*)"/g,'$1' + RegExp.$2.replace(/,/g,'COMMA'))
+						text.split \,
+							.map (str)->
+								str.replace(/COMMA/g,',')
 					.filter (list) -> list[1]
 
 		lastFolder = {id:0 , set: (n)!-> this.id = n}
