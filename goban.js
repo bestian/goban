@@ -113,7 +113,7 @@
     };
     goban.load = function(num){
       var folderName;
-      folderName = $gobanTitle + num;
+      folderName = goban.title + num;
       if (typeof goban.folderNames === 'array') {
         folderName = goban.folderNames[num];
       }

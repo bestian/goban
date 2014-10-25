@@ -79,7 +79,7 @@ myGoban = ($http, $sce, $gobanPath, $gobanTitle, $hash, $gobanMax, $timeout)->
 
 
 	goban.load = (num) !->
-		folderName = $gobanTitle + num
+		folderName = goban.title + num
 		if typeof goban.folderNames == \array
 			folderName = goban.folderNames[num]
 
