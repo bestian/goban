@@ -21,7 +21,7 @@ myGoban = ($http, $sce, $gobanPath, $gobanTitle, $hash, $gobanMax, $timeout)->
 
 		goodList = bodyLines
 					.map (text) -> 
-						text = text.replace(/"(\s?http)(.*)"/g,'$1' + RegExp.$2.replace(/,/g,'COMMA'))
+						text = text.replace(/(html|css|js|output),/g, '$1COMMA')
 						text.split \,
 							.map (str)->
 								str.replace(/COMMA/g,',')
@@ -34,14 +34,17 @@ myGoban = ($http, $sce, $gobanPath, $gobanTitle, $hash, $gobanMax, $timeout)->
 						if not list[0]
 							lastFolder.set(index)
 							if list[2] and list[2].search /expand(.+)true/ > -1
+								isClosed = false
+							if list[2] and list[2].search /expand(.+)false/ > -1
 								isClosed = true
+						else
 							if list[2] && list[2].search(/target(.+)_blank/ > -1)
 								isBlank = true
-							if list[2] && list[2].search(/isolate(.+)_true/ > -1)
+							if list[2] && list[2].search(/isolate(.+)true/ > -1)
 								isIsolate = true
 
 						obj = (list[0]
-						and {url: list[0].replace(/["\s]/g, ''), name: list[1].replace(/["\s]/g, ''), isFolder: false, pIndex: lastFolder.id})
+						and {url: list[0].replace(/["\s]/g, ''), name: list[1].replace(/["\s]/g, ''), isFolder: false, pIndex: lastFolder.id, isBlank: isBlank, isIsolate: isIsolate})
 							or { name: list[1], isFolder: true, isClosed: isClosed}
 
 						obj
@@ -145,6 +148,8 @@ myGoban = ($http, $sce, $gobanPath, $gobanTitle, $hash, $gobanMax, $timeout)->
 		$sce.trustAsResourceUrl(url)
 
 	goban.getCurrentURL = ->
+		if goban.data[goban.myJ] && goban.data[goban.myJ].isBlank
+			return
 		goban.trust((goban.data[goban.myJ] && goban.data[goban.myJ].url) or (goban.data[goban.myJ+1] && goban.data[goban.myJ+1].url))
 
 	goban.backupAll = !->
