@@ -44,12 +44,18 @@
         }
       };
       bestList = goodList.map(function(list, index){
-        var isClosed, obj;
+        var isClosed, isBlank, isIsolate, obj;
         isClosed = false;
         if (!list[0]) {
           lastFolder.set(index);
           if (list[2] && list[2].search(/expand(.+)true/ > -1)) {
             isClosed = true;
+          }
+          if (list[2] && list[2].search(/target(.+)_blank/ > -1)) {
+            isBlank = true;
+          }
+          if (list[2] && list[2].search(/isolate(.+)_true/ > -1)) {
+            isIsolate = true;
           }
         }
         obj = (list[0] && {

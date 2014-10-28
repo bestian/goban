@@ -35,6 +35,10 @@ myGoban = ($http, $sce, $gobanPath, $gobanTitle, $hash, $gobanMax, $timeout)->
 							lastFolder.set(index)
 							if list[2] and list[2].search /expand(.+)true/ > -1
 								isClosed = true
+							if list[2] && list[2].search(/target(.+)_blank/ > -1)
+								isBlank = true
+							if list[2] && list[2].search(/isolate(.+)_true/ > -1)
+								isIsolate = true
 
 						obj = (list[0]
 						and {url: list[0].replace(/["\s]/g, ''), name: list[1].replace(/["\s]/g, ''), isFolder: false, pIndex: lastFolder.id})
