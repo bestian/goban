@@ -91,8 +91,11 @@ myGoban = ($http, $sce, $gobanPath, $gobanTitle, $hash, $gobanMax, $timeout)->
 			folderName = goban.folderNames[num]
 
 		$http {method: "GET",url: $gobanPath + folderName + '.csv',dataType: "text"}
-				.success (data) ->
+				.success (data) !->
 					goban.data = parseFromCSV data
+				.error !->
+					goban.sectionTitle = null
+					goban.data = []
 
 
 	goban.keyDown = ($event) !->

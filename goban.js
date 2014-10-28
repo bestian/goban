@@ -134,7 +134,10 @@
         url: $gobanPath + folderName + '.csv',
         dataType: "text"
       }).success(function(data){
-        return goban.data = parseFromCSV(data);
+        goban.data = parseFromCSV(data);
+      }).error(function(){
+        goban.sectionTitle = null;
+        goban.data = [];
       });
     };
     goban.keyDown = function($event){
