@@ -45,8 +45,8 @@
     });
     angular.extend(goban, {
       setI: function(n){
-        if (goban.myI !== n) {
-          goban.loadPage();
+        if (this.myI !== n) {
+          this.loadPage();
           $timeout(function(){
             goban.myI = n;
             goban.updateHash();
@@ -55,8 +55,8 @@
         }
       },
       setJ: function(n){
-        if (goban.myJ !== n) {
-          goban.loadPage();
+        if (this.myJ !== n) {
+          this.loadPage();
           $timeout(function(){
             goban.myJ = n;
             goban.updateHash();
@@ -64,23 +64,23 @@
         }
       },
       loadPage: function(){
-        goban.pageLoading = true;
+        this.pageLoading = true;
         if (goban.animate.delay) {
           $timeout(function(){
             goban.pageLoading = false;
           }, goban.animate.delay);
         } else {
-          goban.pageLoading = false;
+          this.pageLoading = false;
         }
       },
       updateHash: function(){
-        $hash.upDateFromArray([goban.title, goban.myI, goban.myJ]);
+        $hash.upDateFromArray([this.title, this.myI, this.myJ]);
       },
       load: function(num){
         var folderName;
-        folderName = goban.title + num;
-        if (typeof goban.folderNames === 'array') {
-          folderName = goban.folderNames[num];
+        folderName = this.title + num;
+        if (typeof this.folderNames === 'array') {
+          folderName = this.folderNames[num];
         }
         $http({
           method: "GET",
@@ -96,7 +96,7 @@
       parseFromCSV: function(csv){
         var allTextLines, bodyLines, goodList, lastFolder, bestList;
         allTextLines = csv.split(/\r\n|\n/);
-        goban.sectionTitle = allTextLines[1].split(',')[1];
+        this.sectionTitle = allTextLines[1].split(',')[1];
         bodyLines = allTextLines.slice(2);
         goodList = bodyLines.map(function(text){
           text = text.replace(/(html|css|js|output),/g, '$1COMMA');
@@ -153,19 +153,19 @@
         $event.preventDefault();
         code = $event.keyCode;
         if (code === 40) {
-          goban.dy(1);
+          this.dy(1);
         }
         if (code === 38) {
-          goban.dy(-1);
+          this.dy(-1);
         }
         if (code === 37) {
-          goban.dx(-1);
+          this.dx(-1);
         }
         if (code === 39) {
-          goban.dx(1);
+          this.dx(1);
         }
         if (code === 32) {
-          goban.data[goban.myJ].isClosed = !goban.data[goban.myJ].isClosed;
+          this.data[this.myJ].isClosed = !this.data[this.myJ].isClosed;
         }
       },
       dx: function(n){
@@ -181,10 +181,10 @@
           }
           goban.updateHash();
         };
-        goban.loadPage();
-        goban.load(parseInt(goban.myI) + n);
-        if (goban.animate.delay) {
-          $timeout(goX(n), goban.animate.delay);
+        this.loadPage();
+        this.load(parseInt(this.myI) + n);
+        if (this.animate.delay) {
+          $timeout(goX(n), this.animate.delay);
         } else {
           goX(n);
         }
@@ -202,9 +202,9 @@
           }
           goban.updateHash();
         };
-        goban.loadPage();
-        if (goban.animate.delay) {
-          $timeout(goY(n), goban.animate.delay);
+        this.loadPage();
+        if (this.animate.delay) {
+          $timeout(goY(n), this.animate.delay);
         } else {
           goY(n);
         }
@@ -214,9 +214,9 @@
         goZ = function(n){
           goban.myK += n;
         };
-        goban.loadPage();
-        if (goban.animate.delay) {
-          $timeout(goY(n), goban.animate.delay);
+        this.loadPage();
+        if (this.animate.delay) {
+          $timeout(goZ(n), this.animate.delay);
         } else {
           goZ(n);
         }
@@ -225,11 +225,11 @@
         return $sce.trustAsResourceUrl(url);
       },
       getCurrentURL: function(){
-        if (goban.data[goban.myJ] && goban.data[goban.myJ].isBlank) {
-          $window.open(goban.data[goban.myJ].url);
+        if (this.data[this.myJ] && this.data[this.myJ].isBlank) {
+          $window.open(this.data[this.myJ].url);
           return;
         }
-        return goban.trust((goban.data[goban.myJ] && goban.data[goban.myJ].url) || (goban.data[goban.myJ + 1] && goban.data[goban.myJ + 1].url));
+        return this.trust((this.data[this.myJ] && this.data[this.myJ].url) || (this.data[this.myJ + 1] && this.data[this.myJ + 1].url));
       },
       backupAll: function(){
         var downloadURL, i$, ref$, len$, i;

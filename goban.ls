@@ -35,35 +35,35 @@ myGoban = ($http, $sce, $gobanPath, $gobanTitle, $hash, $gobanMax, $timeout, $wi
 
 	angular.extend(goban,{
 		setI : (n) !->
-			if goban.myI != n
-				goban.loadPage!
+			if @.myI != n
+				@.loadPage!
 				$timeout (!-> 
 					goban.myI = n
 					goban.updateHash!
 					goban.load goban.myI),1000
 	
 		setJ : (n) !->	
-			if goban.myJ != n
-				goban.loadPage!
+			if @.myJ != n
+				@.loadPage!
 				$timeout (!-> 
 					goban.myJ = n
 					goban.updateHash!),1000
 	
 		loadPage : !->
-			goban.pageLoading = true
+			@.pageLoading = true
 			if goban.animate.delay	
 				$timeout (!-> goban.pageLoading = false),goban.animate.delay
 			else 
-				goban.pageLoading = false
+				@.pageLoading = false
 	
 		updateHash : !->
-			$hash.upDateFromArray [goban.title, goban.myI,goban.myJ]
+			$hash.upDateFromArray [@.title, @.myI, @.myJ]
 
 
 		load : (num) !->
-			folderName = goban.title + num
-			if typeof goban.folderNames == \array
-				folderName = goban.folderNames[num]
+			folderName = @.title + num
+			if typeof @.folderNames == \array
+				folderName = @.folderNames[num]
 
 			$http {method: "GET",url: $gobanPath + folderName + '.csv',dataType: "text"}
 					.success (data) !->
@@ -74,7 +74,7 @@ myGoban = ($http, $sce, $gobanPath, $gobanTitle, $hash, $gobanMax, $timeout, $wi
 
 		parseFromCSV : (csv) ->
 			allTextLines = csv.split(/\r\n|\n/)
-			goban.sectionTitle = allTextLines[1].split(',')[1]
+			@.sectionTitle = allTextLines[1].split(',')[1]
 
 
 			bodyLines = allTextLines.slice(2)
@@ -115,15 +115,15 @@ myGoban = ($http, $sce, $gobanPath, $gobanTitle, $hash, $gobanMax, $timeout, $wi
 			$event.preventDefault()
 			code = $event.keyCode
 			if code == 40
-				goban.dy 1
+				@.dy 1
 			if code == 38
-				goban.dy -1
+				@.dy -1
 			if code == 37
-				goban.dx -1
+				@.dx -1
 			if code == 39
-				goban.dx 1
+				@.dx 1
 			if code == 32
-				goban.data[goban.myJ].isClosed = !goban.data[goban.myJ].isClosed
+				@.data[@.myJ].isClosed = !@.data[@.myJ].isClosed
 
 		dx : (n) !->
 			goX = (n) !-> 
@@ -134,10 +134,10 @@ myGoban = ($http, $sce, $gobanPath, $gobanTitle, $hash, $gobanMax, $timeout, $wi
 				if goban.myI == goban.colMax + 1
 					goban.myI = 0
 				goban.updateHash!
-			goban.loadPage!
-			goban.load parseInt(goban.myI) + n
-			if goban.animate.delay
-				$timeout (goX n),goban.animate.delay
+			@.loadPage!
+			@.load parseInt(@.myI) + n
+			if @.animate.delay
+				$timeout (goX n), @.animate.delay
 			else
 				goX n
 
@@ -150,9 +150,9 @@ myGoban = ($http, $sce, $gobanPath, $gobanTitle, $hash, $gobanMax, $timeout, $wi
 				if goban.myJ == goban.data.length
 					goban.myJ = 0
 				goban.updateHash!
-			goban.loadPage!
-			if goban.animate.delay
-				$timeout (goY n),goban.animate.delay
+			@.loadPage!
+			if @.animate.delay
+				$timeout (goY n), @.animate.delay
 			else 
 				goY n
 
@@ -160,9 +160,9 @@ myGoban = ($http, $sce, $gobanPath, $gobanTitle, $hash, $gobanMax, $timeout, $wi
 		dz : (n) !->
 			goZ = (n) !-> 
 				goban.myK += n
-			goban.loadPage!
-			if goban.animate.delay
-				$timeout (goY n),goban.animate.delay
+			@.loadPage!
+			if @.animate.delay
+				$timeout (goZ n),@.animate.delay
 			else 
 				goZ n
 
@@ -170,10 +170,10 @@ myGoban = ($http, $sce, $gobanPath, $gobanTitle, $hash, $gobanMax, $timeout, $wi
 			$sce.trustAsResourceUrl(url)
 
 		getCurrentURL : ->
-			if goban.data[goban.myJ] && goban.data[goban.myJ].isBlank
-				$window.open(goban.data[goban.myJ].url)
+			if @.data[@.myJ] && @.data[@.myJ].isBlank
+				$window.open(@.data[@.myJ].url)
 				return
-			goban.trust((goban.data[goban.myJ] && goban.data[goban.myJ].url) or (goban.data[goban.myJ+1] && goban.data[goban.myJ+1].url))
+			@.trust((@.data[@.myJ] && @.data[@.myJ].url) or (@.data[@.myJ+1] && @.data[@.myJ+1].url))
 
 		backupAll : !->
 			downloadURL = (url,k) ->
