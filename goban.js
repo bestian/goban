@@ -248,7 +248,7 @@
         };
         for (i$ = 0, len$ = (ref$ = (fn$())).length; i$ < len$; ++i$) {
           i = ref$[i$];
-          downloadURL($gobanPath + $gobanTitle + i + '.csv', i);
+          downloadURL(goban.path + goban.title + i + '.csv', i);
         }
         function fn$(){
           var i$, to$, results$ = [];
