@@ -51,8 +51,14 @@ a {
 				@include border-radius(50%);
 				border: 3px solid gray;
 				text-decoration: none;
+				overflow:hidden;
 				&:hover, &:active, &.active {
 					background-color: mix(black,gray);
+				}				
+				.goban-nav-icon {
+					margin-left: -$w + 10px;
+					margin-top:-50%;
+					height:25px;	
 				}
 			}	
 		}
@@ -71,6 +77,7 @@ a {
 	right:15px;
 }
 
+
 .goban-blank {
 	position: absolute;
 	z-index: 3;
@@ -88,6 +95,17 @@ a {
 		@include border-radius(0px 0px 50% 50%);
 	}
 }
+
+
+#goban-main:hover {
+	.goban-blank {
+		margin-top: -50px;
+		width:420px;
+		@include transition(all 1.5s ease-in);
+		@include transition-delay(0.8s);
+	}
+}
+
 
 #goban-toggleSidebar {
 	display: inline-block;
