@@ -1,33 +1,50 @@
-Goban 黑客棋盤
+Goban 棋盤
 =====
 
 use Goban to manage series of  hackfoldrs
 
-# Example
+# Example 例子
 For a simple example, see here: [https://bestian.github.io/frontend]
+For a complex example, see here: [https://glassy.github.io/link]
 
 
-# Getting Started with Goban
+# Getting Started with Goban 上手寫棋盤
 
-##why Goban?
+##why Goban? 為何用棋盤?
 
 [http://hackfoldr.org] is an awesome tool to share and collaborate about 20~30 urls with friends by its grouping power and its ethercalc base.
 
-if you have series of hackfolders and about 30~100 urls to share, you might wish to collect them and show in a single-page web app. This is what Goban does.
+if you have series of hackfolders or you have about 30~500 urls to share, you might wish to collect them into a single-page web app. This is what Goban does.
 
-## Mindset
+黑客公事包非常好用，因為以醚算表(ethercalc)為底，在分享與協作20~30個網址時十分有用。
 
-The Goban mindset it just like a real goban, using coordinates (i,j) to locate an object from a table-like data.
+如果你有一系列的黑客公事包，或是想要分享與協作30~500個網址，你或許會想將它們集中到單一的不換算網路APP。這就是棋盤的用途。
+
+## Mindset 概念
+
+The Goban mindset it just like a real world goban, using coordinates (i,j,k) to locate an object from a table-like data.
+
+棋盤的概念恰如實體世界的棋盤，用座標(i,j,k)從表格中來定位資料。
 
 ![Example] (http://upload.wikimedia.org/wikipedia/commons/6/63/Goban_19x19_vide.png)
 
+##notification 注意
 
-##installation
+goban is under construction and not stable right now. the code may be change later after a new release. before you update goban module, please read README.md for possible incompatible change first.
 
-install goban from bower:
+棋盤還在建構中，尚不穩定。新版釋出時，程式碼的寫法可能會有所變動。在更新模組前請先閱讀新的「README」來檢視可能存在的不相容寫法。
+
+
+##installation and updating 安裝與更新
+
+install goban from bower: 用射手(bower)來安裝與更新
 
 ```bash
 $ bower install goban 
+```
+
+```bash
+$ bower update goban 
 ```
 
 install goban in yourApp.js, use following code:
@@ -37,6 +54,8 @@ install goban in yourApp.js, use following code:
 angular.module('yourApp', ['goban'])
 
 ```
+
+##configuaration and initialization 設定與初始化
 
 config goban with $default,
 
@@ -72,6 +91,7 @@ default colMax is 3, which makes goban load 4 csvs. you may change it before or 
 
 
 to customize path and colMax before before app start, simply use following:
+(note: path customizing and change feature will be marged into goban-z later, and the code will be changed, too)
 
 ```bash
 function yourCtrl($goban) {
