@@ -30,9 +30,9 @@ The Goban mindset it just like a real world goban, using coordinates (i,j,k) to 
 
 ##notification 注意
 
-goban is under construction and not stable right now. the code may be change later after a new release. before you update goban module, please read README.md for possible incompatible change first.
+goban is under construction and not stable right now. the code may be change later after a new release. before you update goban module, please check README.md for possible incompatible change first.
 
-棋盤還在建構中，尚不穩定。新版釋出時，程式碼的寫法可能會有所變動。在更新模組前請先閱讀新的「README」來檢視可能存在的不相容寫法。
+棋盤還在建構中，尚不穩定。新版釋出時，程式碼的寫法可能會有所變動。在更新模組前請先檢閱新的「README」來檢視可能存在的不相容寫法。
 
 
 ##installation and updating 安裝與更新
@@ -47,8 +47,7 @@ $ bower install goban
 $ bower update goban 
 ```
 
-install goban in yourApp.js, use following code:
-
+install goban in your angular app, use following code: 在您的angular程式中安裝棋盤：
 
 ```bash
 angular.module('yourApp', ['goban'])
@@ -57,8 +56,7 @@ angular.module('yourApp', ['goban'])
 
 ##configuaration and initialization 設定與初始化
 
-config goban with $default,
-
+config goban with $default and then use $goban.init() to initialize, 用$default的寫法來設定，再用$goban.init()來初始化
 
 ```bash
 angular.module('goban')
@@ -71,7 +69,7 @@ function yourCtrl($goban) {
     $scope.goban = $goban.$default({
       title: 'your_title',
     });
-    $scope.goban.init();
+    $goban.init();
 }
 
 ```
