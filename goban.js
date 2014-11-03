@@ -21,27 +21,21 @@
       }
     };
   };
-  myGoban = function($http, $sce, $gobanPath, $gobanTitle, $hash, $gobanMax, $timeout, $window){
+  myGoban = function($http, $sce, $hash, $timeout, $window){
     var goban;
     goban = new Object;
     angular.extend(goban, {
       data: [],
       z: [],
-      path: $gobanPath || '',
-      title: $hash.asArray()[0] || $gobanTitle,
+      path: 'https://ethercalc.org/',
+      title: $hash.asArray()[0] || '',
       myI: $hash.asArray()[1] || 0,
       myJ: $hash.asArray()[2] || 0,
       myK: 0,
       pageLoading: false,
       animate: new Object,
-      colMax: $gobanMax || 3,
-      myColumnIndex: (function(){
-        var i$, to$, results$ = [];
-        for (i$ = 0, to$ = $gobanMax; i$ <= to$; ++i$) {
-          results$.push(i$);
-        }
-        return results$;
-      }())
+      colMax: 3,
+      myColumnIndex: [0, 1, 2, 3]
     });
     angular.extend(goban, {
       setI: function(n){
@@ -84,7 +78,7 @@
         }
         $http({
           method: "GET",
-          url: $gobanPath + folderName + '.csv',
+          url: this.path + folderName + '.csv',
           dataType: "text"
         }).success(function(data){
           goban.data = goban.parseFromCSV(data);
@@ -92,6 +86,9 @@
           goban.sectionTitle = null;
           goban.data = [];
         });
+      },
+      init: function(){
+        this.load(this.myI);
       },
       parseFromCSV: function(csv){
         var allTextLines, bodyLines, goodList, lastFolder, bestList;
@@ -252,7 +249,7 @@
         }
         function fn$(){
           var i$, to$, results$ = [];
-          for (i$ = 0, to$ = $gobanMax; i$ <= to$; ++i$) {
+          for (i$ = 0, to$ = goban.colMax; i$ <= to$; ++i$) {
             results$.push(i$);
           }
           return results$;
@@ -260,12 +257,21 @@
       },
       $default: function(obj){
         angular.extend(this, obj);
+        angular.extend(this, {
+          myColumnIndex: (function(){
+            var i$, to$, results$ = [];
+            for (i$ = 0, to$ = goban.colMax; i$ <= to$; ++i$) {
+              results$.push(i$);
+            }
+            return results$;
+          }())
+        });
         return this;
       }
     });
     return goban;
   };
-  angular.module('goban', []).factory('$hash', myHash).factory('$goban', ['$http', '$sce', '$gobanPath', '$gobanTitle', '$hash', '$gobanMax', '$timeout', '$window', myGoban]).filter('toIndex', toIndex);
+  angular.module('goban', []).factory('$hash', myHash).factory('$goban', ['$http', '$sce', '$hash', '$timeout', '$window', myGoban]).filter('toIndex', toIndex);
   function deepEq$(x, y, type){
     var toString = {}.toString, hasOwnProperty = {}.hasOwnProperty,
         has = function (obj, key) { return hasOwnProperty.call(obj, key); };

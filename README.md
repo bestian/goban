@@ -38,47 +38,54 @@ angular.module('yourApp', ['goban'])
 
 ```
 
-config goban with three constants: $path, $title, $colMax,
+config goban with $default,
 
 
 ```bash
 angular.module('goban')
-  .constant('$gobanPath', 'https://ethercalc.org/')
-  .constant('$gobanTitle', 'your_title')
-  .constant('$gobanMax', 6)
-
 ```
 
-if you wish a static data link, use 
+in your controller, use following:
 
 ```bash
-  .constant('$path', 'your_path')
-```
+function yourCtrl($goban) {
+    $scope.goban = $goban.$default({
+      title: 'your_title',
+    });
+    $scope.goban.init();
+}
 
+```
+to start data binding.
 use the example code above, Goban will automantically send http GET request to these url when needed: 
 	
 * https://ethercalc.org/your_title0.csv
 * https://ethercalc.org/your_title1.csv
 * https://ethercalc.org/your_title2.csv
 * https://ethercalc.org/your_title3.csv
-* https://ethercalc.org/your_title4.csv
-* https://ethercalc.org/your_title5.csv
-* https://ethercalc.org/your_title6.csv
 
-you may change 'https://ethercalc.org/' to any other path, but your have to save your data use .csv file with same formet as ethercalc, and the path you link must allow http GET request
+default path is 'https://ethercalc.org/'.
+
+you may change it to any other path, but your have to save your data use .csv file with same formet as ethercalc, and the path you link must allow http GET request.
+
+default colMax is 3, which makes goban load 4 csvs. you may change it also.
 
 
-
-in your controller, use
+to customize path and colMax, simply use following:
 
 ```bash
 function yourCtrl($goban) {
-    $scope.goban = $goban;
-    $scope.goban.load($goban.myI);
+    $scope.goban = $goban.$default({
+      path: 'your_path'
+      title: 'your_title',
+      colMax: 7
+    });
+    $scope.goban.init();
 }
 
 ```
-to start data binding.
+
+
 
 
 

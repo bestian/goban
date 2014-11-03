@@ -9,7 +9,7 @@ myHash = ->
 	upDateFromArray: (list) !->
 		location.hash = \# + list.join \&
 
-myGoban = ($http, $sce, $gobanPath, $gobanTitle, $hash, $gobanMax, $timeout, $window)->
+myGoban = ($http, $sce, $hash, $timeout, $window)->
 	goban = new Object;
 
 	
@@ -19,15 +19,15 @@ myGoban = ($http, $sce, $gobanPath, $gobanTitle, $hash, $gobanMax, $timeout, $wi
 	angular.extend(goban, {
 		data:[],
 		z:[],
-		path : $gobanPath or '',
-		title : $hash.asArray![0] or $gobanTitle,
+		path : 'https://ethercalc.org/',
+		title : $hash.asArray![0] or '',
 		myI : $hash.asArray![1] or 0,
 		myJ : $hash.asArray![2] or 0,
 		myK : 0,
 		pageLoading : false,
 		animate : new Object,
-		colMax : $gobanMax or 3,
-		myColumnIndex : [to $gobanMax]
+		colMax : 3,
+		myColumnIndex : [0,1,2,3]
 
 	})
 
@@ -65,12 +65,16 @@ myGoban = ($http, $sce, $gobanPath, $gobanTitle, $hash, $gobanMax, $timeout, $wi
 			if typeof @.folderNames == \array
 				folderName = @.folderNames[num]
 
-			$http {method: "GET",url: $gobanPath + folderName + '.csv',dataType: "text"}
+			$http {method: "GET",url: this.path + folderName + '.csv',dataType: "text"}
 					.success (data) !->
 						goban.data = goban.parseFromCSV data
 					.error !->
 						goban.sectionTitle = null
 						goban.data = []
+
+		init : !->
+			this.load(this.myI)
+			
 
 		parseFromCSV : (csv) ->
 			allTextLines = csv.split(/\r\n|\n/)
@@ -186,11 +190,12 @@ myGoban = ($http, $sce, $gobanPath, $gobanTitle, $hash, $gobanMax, $timeout, $wi
 					iframe.style.display = 'none'
 					document.body.appendChild(iframe)
 				iframe.src = url
-			for i in [to $gobanMax]
+			for i in [to goban.colMax]
 				downloadURL(goban.path + goban.title + i + \.csv, i)	  
 
 		$default : (obj)->
 			angular.extend(this,obj)
+			angular.extend(this,{myColumnIndex : [to goban.colMax]})
 			this
 
 	})
@@ -200,5 +205,5 @@ myGoban = ($http, $sce, $gobanPath, $gobanTitle, $hash, $gobanMax, $timeout, $wi
 
 angular.module 'goban' []
 	.factory '$hash' myHash
-	.factory '$goban' [\$http, \$sce, \$gobanPath, \$gobanTitle, \$hash, \$gobanMax, \$timeout, \$window myGoban]
+	.factory '$goban' [\$http, \$sce, \$hash, \$timeout, \$window myGoban]
 	.filter 'toIndex' toIndex
