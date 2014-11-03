@@ -1,4 +1,4 @@
-Goban 棋盤
+Goban 黑客棋盤
 =====
 
 use Goban to manage series of  hackfoldrs
@@ -68,10 +68,10 @@ default path is 'https://ethercalc.org/'.
 
 you may change it to any other path, but your have to save your data use .csv file with same formet as ethercalc, and the path you link must allow http GET request.
 
-default colMax is 3, which makes goban load 4 csvs. you may change it also.
+default colMax is 3, which makes goban load 4 csvs. you may change it before or after app start.
 
 
-to customize path and colMax, simply use following:
+to customize path and colMax before before app start, simply use following:
 
 ```bash
 function yourCtrl($goban) {
@@ -85,11 +85,27 @@ function yourCtrl($goban) {
 
 ```
 
+to change,path,titilem and colMax after app start, simply change it. like following:
 
+
+```bash
+  <a ng-click = "goban.path = 'another_path'">
+```
+
+or use
+
+```bash
+  $scope.chPath = function(p){
+    $goban.path = p;
+  }
+```
+
+then apply it use angular way.
 
 
 
 you may also set costum folder names to manage existing hackfolders:
+(note: this feature will be marged into goban-z later, and the code will be changed, too)
 
 ```bash
   $goban.folderNames = ["foo","bar","baz"]
