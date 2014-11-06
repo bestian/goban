@@ -87,12 +87,32 @@
           goban.data = [];
         });
       },
+      redirect: function(url){
+        if (url.indexOf(".csv") === -1) {
+          url += '.csv';
+        }
+        $http({
+          method: "GET",
+          url: url,
+          dataType: "text"
+        }).success(function(data){
+          goban.data = goban.parseFromCSV(data);
+        }).error(function(){
+          goban.sectionTitle = null;
+          goban.data = [];
+        });
+      },
       init: function(){
         this.load(this.myI);
       },
       parseFromCSV: function(csv){
-        var allTextLines, bodyLines, goodList, lastFolder, bestList;
+        var allTextLines, maybeRedirect, bodyLines, goodList, lastFolder, bestList;
         allTextLines = csv.split(/\r\n|\n/);
+        maybeRedirect = allTextLines[0].split(',')[0];
+        if (maybeRedirect) {
+          goban.redirect(maybeRedirect);
+          return;
+        }
         this.sectionTitle = allTextLines[1].split(',')[1];
         bodyLines = allTextLines.slice(2);
         goodList = bodyLines.map(function(text){

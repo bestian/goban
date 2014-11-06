@@ -72,14 +72,32 @@ myGoban = ($http, $sce, $hash, $timeout, $window)->
 						goban.sectionTitle = null
 						goban.data = []
 
+		redirect : (url) !->
+			if url.indexOf(".csv") == -1
+				url += '.csv'
+			$http {method: "GET",url: url, dataType: "text"}
+					.success (data) !->
+						goban.data = goban.parseFromCSV data
+					.error !->
+						goban.sectionTitle = null
+						goban.data = []
+
 		init : !->
 			this.load(this.myI)
 			
 
 		parseFromCSV : (csv) ->
 			allTextLines = csv.split(/\r\n|\n/)
-			@.sectionTitle = allTextLines[1].split(',')[1]
 
+
+		#REDIRECT
+			maybeRedirect = allTextLines[0].split(',')[0]
+			if maybeRedirect
+				goban.redirect(maybeRedirect)
+				return
+
+		#TITLE
+			@.sectionTitle = allTextLines[1].split(',')[1]
 
 			bodyLines = allTextLines.slice(2)
 
