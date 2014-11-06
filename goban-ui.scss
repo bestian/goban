@@ -2,7 +2,6 @@
 @import "compass/CSS3";
 
 
-$side : 15%;
 $frameHeight: 600px;
 $nav : 50px;
 $nav-bg-color : hsla(0,0%,18%,1);
@@ -205,7 +204,6 @@ a {
 
 #goban-side {
 	@include box-sizing(border-box);
-	width: $side;
 	float:left;
 	height: $frameHeight;	
 	overflow-x: hidden;
@@ -276,7 +274,6 @@ a {
 }
 
 #goban-main {
-	width: 100% - $side;
 	height: $frameHeight;
 	float:right;
 	iframe {
@@ -291,5 +288,44 @@ a {
 			z-index: -5;
 		}
 	}
+	&.full {
+	  width: 100%;
+	}
+}
+
+@media screen and (max-width: 420px) {
+  #goban-side {
+    width: 40%;
+  }
+  #goban-main {
+    width: 60%;  
+  }
+}
+
+
+@media screen and (min-width: 420px) {
+  #goban-side {
+    width: 30%;
+  }
+  #goban-main {
+    width: 70%;  
+  }
+}
+@media screen and (min-width: 820px) {
+  #goban-side {
+    width: 20%;
+  }
+  #goban-main {
+    width: 80%;  
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  #goban-side {
+    width: 15%;
+  }
+  #goban-main {
+    width: 85%;  
+  }
 }
 
