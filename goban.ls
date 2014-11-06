@@ -92,7 +92,7 @@ myGoban = ($http, $sce, $hash, $timeout, $window)->
 
 		#REDIRECT
 			maybeRedirect = allTextLines[0].split(',')[0]
-			if maybeRedirect
+			if maybeRedirect and (maybeRedirect.substr(0,1) != \#)
 				goban.redirect(maybeRedirect)
 				return
 
@@ -212,13 +212,17 @@ myGoban = ($http, $sce, $hash, $timeout, $window)->
 				downloadURL(goban.path + goban.title + i + \.csv, i)	  
 
 		$default : (obj)->
+			console.log location.hash.split('&')[0].replace('#','')
+
 			angular.extend(this,obj)
 			angular.extend(this,{myColumnIndex : [to goban.colMax]})
+			if location.hash.split('&')[0].replace('#','')
+				console.log location.hash.split('&')[0].replace('#','')
+				goban.title = location.hash.split('&')[0].replace('#','')
 			this
 
 	})
-    
-
+   
 	goban
 
 angular.module 'goban' []
