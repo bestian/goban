@@ -53,6 +53,7 @@ a {
 				overflow:hidden;
 				&:hover, &:active, &.active {
 					background-color: mix(black,gray);
+					border: 3px solid #eee;
 				}				
 				.goban-nav-icon {
 					margin-left: -$w + 10px;
