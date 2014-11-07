@@ -59,6 +59,7 @@ a {
 /* line 54, goban-ui.scss */
 #goban-nav ul li a:hover, #goban-nav ul li a:active, #goban-nav ul li a.active {
   background-color: #404040;
+  border: 3px solid #eee;
 }
 /* line 57, goban-ui.scss */
 #goban-nav ul li a .goban-nav-icon {
