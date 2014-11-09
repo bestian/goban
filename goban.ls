@@ -18,7 +18,12 @@ myGoban = ($http, $sce, $hash, $timeout, $window)->
 
 	angular.extend(goban, {
 		data:[],
-		z:[],
+		xAxis:{
+			icons: [],
+		},
+		zAxis:{
+			related: [],
+		},
 		path : 'https://ethercalc.org/',
 		title : $hash.asArray![0] or '',
 		myI : $hash.asArray![1] or 0,
@@ -49,6 +54,10 @@ myGoban = ($http, $sce, $hash, $timeout, $window)->
 					goban.myJ = n
 					goban.updateHash!),1000
 	
+		updateHash : !->
+			$hash.upDateFromArray [@.title, @.myI, @.myJ]
+
+
 		loadPage : !->
 			@.pageLoading = true
 			if goban.animate.delay	
@@ -56,9 +65,6 @@ myGoban = ($http, $sce, $hash, $timeout, $window)->
 			else 
 				@.pageLoading = false
 	
-		updateHash : !->
-			$hash.upDateFromArray [@.title, @.myI, @.myJ]
-
 
 		load : (num) !->
 			folderName = @.title + num
@@ -71,6 +77,21 @@ myGoban = ($http, $sce, $hash, $timeout, $window)->
 					.error !->
 						goban.sectionTitle = null
 						goban.data = []
+
+		loadConfig : !->
+			folderName = @.title + 'Config'
+			$http {method: "GET",url: this.path + folderName + '.csv',dataType: "text"}
+					.success (data) !->
+						config = goban.parseConfigFromCSV data
+						goban.colMax = config.colMax
+						goban.xAxis.icons = config.icons
+						goban.zAxis.related = config.related
+
+
+					.error !->
+						goban.sectionTitle = null
+						goban.data = []
+
 
 		redirect : (url) !->
 			if url.indexOf(".csv") == -1
@@ -89,8 +110,8 @@ myGoban = ($http, $sce, $hash, $timeout, $window)->
 		parseFromCSV : (csv) ->
 			allTextLines = csv.split(/\r\n|\n/)
 
-
-		#REDIRECT
+				#REDIRECT
+		
 			maybeRedirect = allTextLines[0].split(',')[0]
 			if maybeRedirect and (maybeRedirect.substr(0,1) != \#)
 				goban.redirect(maybeRedirect)
@@ -131,6 +152,28 @@ myGoban = ($http, $sce, $hash, $timeout, $window)->
 
 							obj
 			bestList
+
+		parseConfigFromCSV : (url) !->
+			allTextLines = csv.split(/\r\n|\n/)
+
+			xIconLines = allTextLines[1].split(',').slice(2)
+			xAltLines = allTextLines[2].split(',').slice(2)
+
+			zTitle = allTextLines[1].split(',')[1]
+			zLines = allTextLines.slice(2)
+
+
+			iconObjs = []			#TODO
+			relatedObjs = []		#TODO
+
+			config = {
+				icons : iconObjs,
+				related : relatedObjs,
+			}
+
+			config
+
+
 
 		keyDown : ($event) !->
 			console.log $event
@@ -182,7 +225,9 @@ myGoban = ($http, $sce, $hash, $timeout, $window)->
 		dz : (n) !->
 			goZ = (n) !-> 
 				goban.myK += n
-			@.loadPage!
+				goban.loadConfig!
+				goban.load!
+
 			if @.animate.delay
 				$timeout (goZ n),@.animate.delay
 			else 

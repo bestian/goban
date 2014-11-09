@@ -26,7 +26,12 @@
     goban = new Object;
     angular.extend(goban, {
       data: [],
-      z: [],
+      xAxis: {
+        icons: []
+      },
+      zAxis: {
+        related: []
+      },
       path: 'https://ethercalc.org/',
       title: $hash.asArray()[0] || '',
       myI: $hash.asArray()[1] || 0,
@@ -57,6 +62,9 @@
           }, 1000);
         }
       },
+      updateHash: function(){
+        $hash.upDateFromArray([this.title, this.myI, this.myJ]);
+      },
       loadPage: function(){
         this.pageLoading = true;
         if (goban.animate.delay) {
@@ -66,9 +74,6 @@
         } else {
           this.pageLoading = false;
         }
-      },
-      updateHash: function(){
-        $hash.upDateFromArray([this.title, this.myI, this.myJ]);
       },
       load: function(num){
         var folderName;
@@ -82,6 +87,24 @@
           dataType: "text"
         }).success(function(data){
           goban.data = goban.parseFromCSV(data);
+        }).error(function(){
+          goban.sectionTitle = null;
+          goban.data = [];
+        });
+      },
+      loadConfig: function(){
+        var folderName;
+        folderName = this.title + 'Config';
+        $http({
+          method: "GET",
+          url: this.path + folderName + '.csv',
+          dataType: "text"
+        }).success(function(data){
+          var config;
+          config = goban.parseConfigFromCSV(data);
+          goban.colMax = config.colMax;
+          goban.xAxis.icons = config.icons;
+          goban.zAxis.related = config.related;
         }).error(function(){
           goban.sectionTitle = null;
           goban.data = [];
@@ -164,6 +187,21 @@
         });
         return bestList;
       },
+      parseConfigFromCSV: function(url){
+        var allTextLines, xIconLines, xAltLines, zTitle, zLines, iconObjs, relatedObjs, config;
+        allTextLines = csv.split(/\r\n|\n/);
+        xIconLines = allTextLines[1].split(',').slice(2);
+        xAltLines = allTextLines[2].split(',').slice(2);
+        zTitle = allTextLines[1].split(',')[1];
+        zLines = allTextLines.slice(2);
+        iconObjs = [];
+        relatedObjs = [];
+        config = {
+          icons: iconObjs,
+          related: relatedObjs
+        };
+        config;
+      },
       keyDown: function($event){
         var code;
         console.log($event);
@@ -230,8 +268,9 @@
         var goZ;
         goZ = function(n){
           goban.myK += n;
+          goban.loadConfig();
+          goban.load();
         };
-        this.loadPage();
         if (this.animate.delay) {
           $timeout(goZ(n), this.animate.delay);
         } else {
