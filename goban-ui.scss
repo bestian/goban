@@ -225,7 +225,7 @@ a {
 				$p: 3px;
 				display:inline-block;
 				padding-top: $p;
-				padding-left: $p*5;
+				padding-left: $p*6;
 				width: $w * 7;
 				overflow:hidden;
 				font-size: $w;
@@ -233,9 +233,9 @@ a {
 				text-decoration: none;
 				@include transition(height 2s ease);
 				&:hover, &:active {
-					$b: 5px;
-					padding-left: $p*5 - $b;
-					border-left: $b solid mix(black,cyan);
+					$b: 3px;
+					padding-left: $p*6 - $b;
+					border-left: $b solid mix(blue,cyan);
 				}
 				&.active {
 					background-color:  $nav-bg-color;
@@ -245,7 +245,8 @@ a {
 					margin-left:15px;
 				}
 				img{
-					margin-right:5px;
+					margin-right:$p;
+					margin-left:-15px;
 					&.folder {
 						height:15px;
 					}
