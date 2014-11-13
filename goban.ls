@@ -239,6 +239,7 @@ myGoban = ($http, $sce, $hash, $timeout, $window)->
 		getCurrentURL : ->
 			if @.data[@.myJ] && @.data[@.myJ].isBlank
 				$window.open(@.data[@.myJ].url)
+				@.data[@.myJ].isBlank = false
 				return
 			@.trust((@.data[@.myJ] && @.data[@.myJ].url) or (@.data[@.myJ+1] && @.data[@.myJ+1].url))
 

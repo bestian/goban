@@ -283,6 +283,7 @@
       getCurrentURL: function(){
         if (this.data[this.myJ] && this.data[this.myJ].isBlank) {
           $window.open(this.data[this.myJ].url);
+          this.data[this.myJ].isBlank = false;
           return;
         }
         return this.trust((this.data[this.myJ] && this.data[this.myJ].url) || (this.data[this.myJ + 1] && this.data[this.myJ + 1].url));
