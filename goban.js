@@ -319,7 +319,7 @@
       $default: function(obj){
         console.log(location.hash.split('&')[0].replace('#', ''));
         angular.extend(this, obj);
-        this.title = $hash.asArray()[0] || '';
+        this.title = $hash.asArray()[0] || this.title;
         angular.extend(this, {
           myColumnIndex: (function(){
             var i$, to$, results$ = [];

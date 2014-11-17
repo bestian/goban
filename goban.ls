@@ -262,7 +262,7 @@ myGoban = ($http, $sce, $hash, $timeout, $window)->
 			console.log location.hash.split('&')[0].replace('#','')
 
 			angular.extend(this,obj)
-			this.title = $hash.asArray![0] or ''
+			@.title = $hash.asArray![0] or @.title
 			angular.extend(this,{myColumnIndex : [to goban.colMax]})
 			if location.hash.split('&')[0].replace('#','')
 				console.log location.hash.split('&')[0].replace('#','')
