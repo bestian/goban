@@ -74,6 +74,7 @@ myGoban = ($http, $sce, $hash, $timeout, $window)->
 			$http {method: "GET",url: this.path + folderName + '.csv',dataType: "text"}
 					.success (data) !->
 						goban.data = goban.parseFromCSV data
+						goban.updateHash!
 					.error !->
 						goban.sectionTitle = null
 						goban.data = []
