@@ -7,6 +7,7 @@ $nav : 50px;
 $nav-bg-color : hsla(0,0%,18%,1);
 
 
+
 a {	
 	cursor:pointer;
 	text-decoration:none;
@@ -295,6 +296,9 @@ a {
 	}
 }
 
+
+
+
 @media screen and (max-width: 420px) {
   #goban-side {
     width: 40%;
@@ -331,3 +335,9 @@ a {
   }
 }
 
+
+@for $i from 0 through 4 {
+	.zoom#{$i} {
+		@include transform(scale(#{1+$i *0.25}));
+	}
+}
