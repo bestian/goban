@@ -9,13 +9,17 @@ myHash = ->
 	upDateFromArray: (list) !->
 		location.hash = \# + list.join \&
 
-myGoban = ($http, $sce, $hash, $timeout, $window)->
+myGobanAnimate = ->
+	GobanAnimate = new Object;
+	angular.extend(GobanAnimate, {
+		#params
+		delay : 0
+	})
+	GobanAnimate
+
+myGoban = ($http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 	goban = new Object;
-
-	
-
-# models
-
+# mOdles
 	angular.extend(goban, {
 		data:[],
 		xAxis:{
@@ -24,21 +28,33 @@ myGoban = ($http, $sce, $hash, $timeout, $window)->
 		zAxis:{
 			related: [],
 		},
+
+	#loaDer
 		path : 'https://ethercalc.org/',
 		title : $hash.asArray![0] or '',
+	
+	#conTrols
 		myI : $hash.asArray![1] or 0,
 		myJ : $hash.asArray![2] or 0,
 		myK : 0,
-		pageLoading : false,
-		animate : new Object,
 		colMax : 3,
-		myColumnIndex : [0,1,2,3]
+		myColumnIndex : [0,1,2,3],
+
+	#sWitchs
+		webConfig: false,
+
+	#staTus
+		pageLoading : false,
+
+	#roBot
+		animate : $GobanAnimate,
 
 	})
 
-# methods
-
+# methOds
 	angular.extend(goban,{
+
+	# moves
 		setI : (n) !->
 			if @.myI != n
 				@.loadPage!
@@ -58,6 +74,7 @@ myGoban = ($http, $sce, $hash, $timeout, $window)->
 			$hash.upDateFromArray [@.title, @.myI, @.myJ]
 
 
+	# loads
 		loadPage : !->
 			@.pageLoading = true
 			if goban.animate.delay	
@@ -88,10 +105,46 @@ myGoban = ($http, $sce, $hash, $timeout, $window)->
 						goban.xAxis.icons = config.icons
 						goban.zAxis.related = config.related
 
-
 					.error !->
 						goban.sectionTitle = null
 						goban.data = []
+
+		parseConfigFromCSV : (url) !->
+
+			ans  = {
+				myName: \Goban,
+				colMax: 3,
+				icons: [], # [{n: 'haha', url: 'bar.jpg'}, 
+							# {n: 'hoho'm url: 'foo.csv'}]
+				related: [],  # [{n: '鼻涕糖前端', t:'bt_frontend'},
+								# {n:'鼻涕糖數學', t:'bt_math'}]
+			}
+
+			allTextLines = csv.split(/\r\n|\n/)
+
+			xIcons = allTextLines[1].split(',').slice(2)
+			xAlts = allTextLines[2].split(',').slice(2)
+
+
+			ans.myName = allTextLines[1].split(',')[1]
+			ans.icons = xIcons
+							.map (u,index)->
+								{u: u,
+								n: Alts[index]}
+
+			zLines = allTextLines.slice(2)
+			
+
+			ans.related = zLines.map (l)->
+							{t: l.split(',')[0],
+							n: l.split(',')[1]}
+
+			relatedList = zTitles.map (t,index)->
+								{t: t,
+								n: zNames[index]}		#TODO
+
+
+			ans
 
 
 		redirect : (url) !->
@@ -107,22 +160,17 @@ myGoban = ($http, $sce, $hash, $timeout, $window)->
 		init : !->
 			this.load(this.myI)
 			
+	#parSers
 
 		parseFromCSV : (csv) ->
 			allTextLines = csv.split(/\r\n|\n/)
-
-				#REDIRECT
-		
 			maybeRedirect = allTextLines[0].split(',')[0]
 			if maybeRedirect and (maybeRedirect.substr(0,1) != \#)
 				goban.redirect(maybeRedirect)
 				return
 
-		#TITLE
 			@.sectionTitle = allTextLines[1].split(',')[1]
-
 			bodyLines = allTextLines.slice(2)
-
 			goodList = bodyLines
 						.map (text) -> 
 							text = text.replace(/(html|css|js|output),/g, '$1COMMA')
@@ -131,12 +179,12 @@ myGoban = ($http, $sce, $hash, $timeout, $window)->
 									str.replace(/COMMA/g,',')
 						.filter (list) -> list[1]
 
-			lastFolder = {id:0 , set: (n)!-> this.id = n}
-			
+			lastFolderIndex = 0
+
 			bestList = goodList.map (list,index) ->
 							isClosed = false
 							if not list[0]
-								lastFolder.set(index)
+								lastFolderIndex := index
 								if list[2] and list[2].search /expand(.+)true/ > -1
 									isClosed = false
 								if list[2] and list[2].search /expand(.+)false/ > -1
@@ -148,31 +196,12 @@ myGoban = ($http, $sce, $hash, $timeout, $window)->
 									isIsolate = true
 
 							obj = (list[0]
-							and {url: list[0].replace(/["\s]/g, ''), name: list[1].replace(/["\s]/g, ''), isFolder: false, pIndex: lastFolder.id, isBlank: isBlank, isIsolate: isIsolate})
+							and {url: list[0].replace(/["\s]/g, ''), name: list[1].replace(/["\s]/g, ''), isFolder: false, pIndex: lastFolderIndex, isBlank: isBlank, isIsolate: isIsolate})
 								or { name: list[1], isFolder: true, isClosed: isClosed}
 
 							obj
 			bestList
 
-		parseConfigFromCSV : (url) !->
-			allTextLines = csv.split(/\r\n|\n/)
-
-			xIconLines = allTextLines[1].split(',').slice(2)
-			xAltLines = allTextLines[2].split(',').slice(2)
-
-			zTitle = allTextLines[1].split(',')[1]
-			zLines = allTextLines.slice(2)
-
-
-			iconObjs = []			#TODO
-			relatedObjs = []		#TODO
-
-			config = {
-				icons : iconObjs,
-				related : relatedObjs,
-			}
-
-			config
 
 
 
@@ -224,13 +253,15 @@ myGoban = ($http, $sce, $hash, $timeout, $window)->
 
 
 		dz : (n) !->
-			goZ = (n) !-> 
-				goban.myK += n
-				goban.loadConfig!
-				goban.load!
+			goZ = (o,n) !-> 
+				o.myK += n
+				o.load!
+				if o.webConfig
+					o.loadConfig!
+
 
 			if @.animate.delay
-				$timeout (goZ n),@.animate.delay
+				$timeout (goZ @ n),@.animate.delay
 			else 
 				goZ n
 
