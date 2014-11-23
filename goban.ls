@@ -89,6 +89,9 @@ myGoban = ($http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 			if typeof @.folderNames == \array
 				folderName = @.folderNames[num]
 
+			if @.webConfig
+				@.loadConfig!
+
 			$http {method: "GET",url: this.path + folderName + '.csv',dataType: "text"}
 					.success (data) !->
 						goban.data = goban.parseFromCSV data
@@ -102,10 +105,13 @@ myGoban = ($http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 			$http {method: "GET",url: this.path + folderName + '.csv',dataType: "text"}
 				.success (data) !->
 					config = goban.parseConfigFromCSV data
-					console.log config
-					goban.colMax = config.colMax
-					goban.icons = config.icons
-					goban.related = config.related
+				
+					if config.colMax
+						goban.colMax = config.colMax
+					if config.icons and config.icons.length
+						goban.icons = config.icons
+					if config.related and config.related.length
+						goban.related = config.related
 							.filter (o)->
 								o and o.n and o.t
 
@@ -159,9 +165,7 @@ myGoban = ($http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 						goban.data = []
 
 		init : !->
-			@.load(@.myI)			
-			if @.webConfig
-				@.loadConfig!
+			@.load(@.myI)	
 			
 	#parSers
 
@@ -258,9 +262,6 @@ myGoban = ($http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 			goZ = (o,n) !-> 
 				o.myK += n
 				o.load!
-				if o.webConfig
-					o.loadConfig!
-
 
 			if @.animate.delay
 				$timeout (goZ @ n),@.animate.delay

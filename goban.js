@@ -87,6 +87,9 @@
         if (typeof this.folderNames === 'array') {
           folderName = this.folderNames[num];
         }
+        if (this.webConfig) {
+          this.loadConfig();
+        }
         $http({
           method: "GET",
           url: this.path + folderName + '.csv',
@@ -109,12 +112,17 @@
         }).success(function(data){
           var config;
           config = goban.parseConfigFromCSV(data);
-          console.log(config);
-          goban.colMax = config.colMax;
-          goban.icons = config.icons;
-          goban.related = config.related.filter(function(o){
-            return o && o.n && o.t;
-          });
+          if (config.colMax) {
+            goban.colMax = config.colMax;
+          }
+          if (config.icons && config.icons.length) {
+            goban.icons = config.icons;
+          }
+          if (config.related && config.related.length) {
+            goban.related = config.related.filter(function(o){
+              return o && o.n && o.t;
+            });
+          }
         }).error(function(){
           goban.sectionTitle = null;
           goban.data = [];
@@ -165,9 +173,6 @@
       },
       init: function(){
         this.load(this.myI);
-        if (this.webConfig) {
-          this.loadConfig();
-        }
       },
       parseFromCSV: function(csv){
         var allTextLines, maybeRedirect, bodyLines, goodList, lastFolderIndex, bestList;
@@ -289,9 +294,6 @@
         goZ = function(o, n){
           o.myK += n;
           o.load();
-          if (o.webConfig) {
-            o.loadConfig();
-          }
         };
         if (this.animate.delay) {
           $timeout(goZ(this(n)), this.animate.delay);
