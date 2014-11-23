@@ -130,8 +130,8 @@
           related: []
         };
         allTextLines = csv.split(/\r\n|\n/);
-        xAlts = allTextLines[1].split(',').slice(2);
-        xIcons = allTextLines[2].split(',').slice(2);
+        xAlts = (allTextLines[1] || "").split(',').slice(2);
+        xIcons = (allTextLines[2] || "").split(',').slice(2);
         ans.myName = allTextLines[1].split(',')[1];
         ans.icons = xIcons.map(function(u, index){
           return {

@@ -127,8 +127,8 @@ myGoban = ($http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 
 			allTextLines = csv.split(/\r\n|\n/)
 
-			xAlts = allTextLines[1].split(',').slice(2)
-			xIcons = allTextLines[2].split(',').slice(2)
+			xAlts = (allTextLines[1] or "").split(',').slice(2)
+			xIcons = (allTextLines[2] or "").split(',').slice(2)
 
 
 			ans.myName = allTextLines[1].split(',')[1]
