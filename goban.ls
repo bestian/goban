@@ -289,8 +289,11 @@ myGoban = ($http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 					iframe.style.display = 'none'
 					document.body.appendChild(iframe)
 				iframe.src = url
-			for i in [to goban.colMax]
-				downloadURL(goban.path + goban.title + i + \.csv, i)	  
+			for i in [to @.colMax]
+				downloadURL(@.path + @.title + i + \.csv, i)
+			if @.webConfig
+				downloadURL(@.path + @.title + \Config.csv, \Config)
+					  
 
 		$default : (obj)->
 			angular.extend(this,obj)

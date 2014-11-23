@@ -327,13 +327,16 @@
           }
           return iframe.src = url;
         };
-        for (i$ = 0, len$ = (ref$ = (fn$())).length; i$ < len$; ++i$) {
+        for (i$ = 0, len$ = (ref$ = (fn$.call(this))).length; i$ < len$; ++i$) {
           i = ref$[i$];
-          downloadURL(goban.path + goban.title + i + '.csv', i);
+          downloadURL(this.path + this.title + i + '.csv', i);
+        }
+        if (this.webConfig) {
+          downloadURL(this.path + this.title + 'Config.csv', 'Config');
         }
         function fn$(){
           var i$, to$, results$ = [];
-          for (i$ = 0, to$ = goban.colMax; i$ <= to$; ++i$) {
+          for (i$ = 0, to$ = this.colMax; i$ <= to$; ++i$) {
             results$.push(i$);
           }
           return results$;
