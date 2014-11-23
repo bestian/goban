@@ -34,12 +34,8 @@
     goban = new Object;
     angular.extend(goban, {
       data: [],
-      xAxis: {
-        icons: []
-      },
-      zAxis: {
-        related: []
-      },
+      icons: [],
+      related: [],
       path: 'https://ethercalc.org/',
       title: $hash.asArray()[0] || '',
       myI: $hash.asArray()[1] || 0,
@@ -86,6 +82,7 @@
       },
       load: function(num){
         var folderName;
+        num = num || 0;
         folderName = this.title + num;
         if (typeof this.folderNames === 'array') {
           folderName = this.folderNames[num];
@@ -112,16 +109,20 @@
         }).success(function(data){
           var config;
           config = goban.parseConfigFromCSV(data);
+          console.log(config);
           goban.colMax = config.colMax;
-          goban.xAxis.icons = config.icons;
-          goban.zAxis.related = config.related;
+          goban.icons = config.icons;
+          goban.related = config.related.filter(function(o){
+            return o && o.n && o.t;
+          });
         }).error(function(){
           goban.sectionTitle = null;
           goban.data = [];
+          console.log('error:connot load webConfig');
         });
       },
-      parseConfigFromCSV: function(url){
-        var ans, allTextLines, xIcons, xAlts, zLines, relatedList;
+      parseConfigFromCSV: function(csv){
+        var ans, allTextLines, xAlts, xIcons, zLines;
         ans = {
           myName: 'Goban',
           colMax: 3,
@@ -129,29 +130,23 @@
           related: []
         };
         allTextLines = csv.split(/\r\n|\n/);
-        xIcons = allTextLines[1].split(',').slice(2);
-        xAlts = allTextLines[2].split(',').slice(2);
+        xAlts = allTextLines[1].split(',').slice(2);
+        xIcons = allTextLines[2].split(',').slice(2);
         ans.myName = allTextLines[1].split(',')[1];
         ans.icons = xIcons.map(function(u, index){
           return {
             u: u,
-            n: Alts[index]
+            n: xAlts[index]
           };
         });
-        zLines = allTextLines.slice(2);
+        zLines = allTextLines.slice(1);
         ans.related = zLines.map(function(l){
           return {
             t: l.split(',')[0],
             n: l.split(',')[1]
           };
         });
-        relatedList = zTitles.map(function(t, index){
-          return {
-            t: t,
-            n: zNames[index]
-          };
-        });
-        ans;
+        return ans;
       },
       redirect: function(url){
         if (url.indexOf(".csv") === -1) {
@@ -170,6 +165,9 @@
       },
       init: function(){
         this.load(this.myI);
+        if (this.webConfig) {
+          this.loadConfig();
+        }
       },
       parseFromCSV: function(csv){
         var allTextLines, maybeRedirect, bodyLines, goodList, lastFolderIndex, bestList;
@@ -227,7 +225,6 @@
       },
       keyDown: function($event){
         var code;
-        console.log($event);
         $event.preventDefault();
         code = $event.keyCode;
         if (code === 40) {
@@ -341,7 +338,6 @@
         }
       },
       $default: function(obj){
-        console.log(location.hash.split('&')[0].replace('#', ''));
         angular.extend(this, obj);
         this.title = $hash.asArray()[0] || this.title;
         angular.extend(this, {
@@ -354,7 +350,6 @@
           }())
         });
         if (location.hash.split('&')[0].replace('#', '')) {
-          console.log(location.hash.split('&')[0].replace('#', ''));
           goban.title = location.hash.split('&')[0].replace('#', '');
         }
         return this;

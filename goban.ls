@@ -21,13 +21,13 @@ myGoban = ($http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 	goban = new Object;
 # mOdles
 	angular.extend(goban, {
+	#	yAxis
 		data:[],
-		xAxis:{
-			icons: [],
-		},
-		zAxis:{
-			related: [],
-		},
+	#	xAxis
+		icons: [],
+	#	zAxis
+		related: [],
+
 
 	#loaDer
 		path : 'https://ethercalc.org/',
@@ -84,6 +84,7 @@ myGoban = ($http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 	
 
 		load : (num) !->
+			num = num or 0
 			folderName = @.title + num
 			if typeof @.folderNames == \array
 				folderName = @.folderNames[num]
@@ -99,18 +100,22 @@ myGoban = ($http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 		loadConfig : !->
 			folderName = @.title + 'Config'
 			$http {method: "GET",url: this.path + folderName + '.csv',dataType: "text"}
-					.success (data) !->
-						config = goban.parseConfigFromCSV data
-						goban.colMax = config.colMax
-						goban.xAxis.icons = config.icons
-						goban.zAxis.related = config.related
+				.success (data) !->
+					config = goban.parseConfigFromCSV data
+					console.log config
+					goban.colMax = config.colMax
+					goban.icons = config.icons
+					goban.related = config.related
+							.filter (o)->
+								o and o.n and o.t
 
-					.error !->
-						goban.sectionTitle = null
-						goban.data = []
+				.error !->
+					goban.sectionTitle = null
+					goban.data = []
+					console.log 'error:connot load webConfig'
 
-		parseConfigFromCSV : (url) !->
 
+		parseConfigFromCSV : (csv) ->
 			ans  = {
 				myName: \Goban,
 				colMax: 3,
@@ -122,26 +127,22 @@ myGoban = ($http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 
 			allTextLines = csv.split(/\r\n|\n/)
 
-			xIcons = allTextLines[1].split(',').slice(2)
-			xAlts = allTextLines[2].split(',').slice(2)
+			xAlts = allTextLines[1].split(',').slice(2)
+			xIcons = allTextLines[2].split(',').slice(2)
 
 
 			ans.myName = allTextLines[1].split(',')[1]
 			ans.icons = xIcons
 							.map (u,index)->
 								{u: u,
-								n: Alts[index]}
+								n: xAlts[index]}
 
-			zLines = allTextLines.slice(2)
+			zLines = allTextLines.slice(1)
 			
 
 			ans.related = zLines.map (l)->
 							{t: l.split(',')[0],
 							n: l.split(',')[1]}
-
-			relatedList = zTitles.map (t,index)->
-								{t: t,
-								n: zNames[index]}		#TODO
 
 
 			ans
@@ -158,7 +159,9 @@ myGoban = ($http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 						goban.data = []
 
 		init : !->
-			this.load(this.myI)
+			@.load(@.myI)			
+			if @.webConfig
+				@.loadConfig!
 			
 	#parSers
 
@@ -206,7 +209,6 @@ myGoban = ($http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 
 
 		keyDown : ($event) !->
-			console.log $event
 			$event.preventDefault()
 			code = $event.keyCode
 			if code == 40
@@ -290,13 +292,10 @@ myGoban = ($http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 				downloadURL(goban.path + goban.title + i + \.csv, i)	  
 
 		$default : (obj)->
-			console.log location.hash.split('&')[0].replace('#','')
-
 			angular.extend(this,obj)
 			@.title = $hash.asArray![0] or @.title
 			angular.extend(this,{myColumnIndex : [to goban.colMax]})
 			if location.hash.split('&')[0].replace('#','')
-				console.log location.hash.split('&')[0].replace('#','')
 				goban.title = location.hash.split('&')[0].replace('#','')
 			this
 
