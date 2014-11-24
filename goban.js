@@ -243,23 +243,28 @@
         var code;
         e.preventDefault();
         code = e.keyCode;
-        if (code === 40) {
+        switch (code) {
+        case 40:
           if (event.shiftKey) {
             this.dz(1);
           } else {
             this.dy(1);
           }
-        }
-        if (code === 38) {
-          this.dy(-1);
-        }
-        if (code === 37) {
+          break;
+        case 38:
+          if (event.shiftKey) {
+            this.dz(-1);
+          } else {
+            this.dy(-1);
+          }
+          break;
+        case 37:
           this.dx(-1);
-        }
-        if (code === 39) {
+          break;
+        case 39:
           this.dx(1);
-        }
-        if (code === 32) {
+          break;
+        case 32:
           this.data[this.myJ].isClosed = !this.data[this.myJ].isClosed;
         }
       },

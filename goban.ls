@@ -223,19 +223,20 @@ myGoban = ($http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 		keyDown : (e) !->
 			e.preventDefault()
 			code = e.keyCode
-			if code == 40
+			switch code
+			case 40 then 
 				if event.shiftKey
 					@.dz 1
 				else
 					@.dy 1
-			if code == 38
-				@.dy -1
-			if code == 37
-				@.dx -1
-			if code == 39
-				@.dx 1
-			if code == 32
-				@.data[@.myJ].isClosed = !@.data[@.myJ].isClosed
+			case 38 then
+				if event.shiftKey
+					@.dz -1
+				else
+					@.dy -1
+			case 37 then @.dx -1
+			case 39 then @.dx 1
+			case 32 then @.data[@.myJ].isClosed = !@.data[@.myJ].isClosed
 
 		dx : (n) !->
 			goX = (n) !-> 
