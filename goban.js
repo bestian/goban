@@ -83,6 +83,9 @@
       load: function(num){
         var folderName;
         num = num || 0;
+        if (this.related && this.related[0]) {
+          this.title = this.related[this.myK];
+        }
         folderName = this.title + num;
         if (typeof this.folderNames === 'array') {
           folderName = this.folderNames[num];
@@ -122,6 +125,14 @@
             goban.related = config.related.filter(function(o){
               return o && o.n && o.t;
             });
+            goban.myName = config.myName;
+            goban.myK = goban.related.map(function(o, index){
+              return [o.name, index];
+            }).filter(function(t){
+              return t.name === goban.myName;
+            }).map(function(t){
+              return t.index;
+            })[0];
           }
         }).error(function(){
           goban.sectionTitle = null;
@@ -228,12 +239,16 @@
         });
         return bestList;
       },
-      keyDown: function($event){
+      keyDown: function(e){
         var code;
-        $event.preventDefault();
-        code = $event.keyCode;
+        e.preventDefault();
+        code = e.keyCode;
         if (code === 40) {
-          this.dy(1);
+          if (event.shiftKey) {
+            this.dz(1);
+          } else {
+            this.dy(1);
+          }
         }
         if (code === 38) {
           this.dy(-1);

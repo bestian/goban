@@ -85,6 +85,10 @@ myGoban = ($http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 
 		load : (num) !->
 			num = num or 0
+
+			if @.related and @.related[0]
+				@.title = @.related[@.myK]
+
 			folderName = @.title + num
 			if typeof @.folderNames == \array
 				folderName = @.folderNames[num]
@@ -114,6 +118,10 @@ myGoban = ($http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 						goban.related = config.related
 							.filter (o)->
 								o and o.n and o.t
+						goban.myName = config.myName
+						goban.myK = (goban.related.map (o,index) -> [o.name, index]
+												.filter (t) -> t.name == goban.myName
+												.map (t) -> t.index)[0]
 
 				.error !->
 					goban.sectionTitle = null
@@ -127,8 +135,8 @@ myGoban = ($http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 				colMax: 3,
 				icons: [], # [{n: 'haha', url: 'bar.jpg'}, 
 							# {n: 'hoho'm url: 'foo.csv'}]
-				related: [],  # [{n: '鼻涕糖前端', t:'bt_frontend'},
-								# {n:'鼻涕糖數學', t:'bt_math'}]
+				related: [],  # [{n: 'BT前端', t:'bt_frontend'},
+								# {n:'BT數學', t:'bt_math'}]
 			}
 
 			allTextLines = csv.split(/\r\n|\n/)
@@ -212,11 +220,14 @@ myGoban = ($http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 
 
 
-		keyDown : ($event) !->
-			$event.preventDefault()
-			code = $event.keyCode
+		keyDown : (e) !->
+			e.preventDefault()
+			code = e.keyCode
 			if code == 40
-				@.dy 1
+				if event.shiftKey
+					@.dz 1
+				else
+					@.dy 1
 			if code == 38
 				@.dy -1
 			if code == 37
