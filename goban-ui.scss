@@ -21,6 +21,7 @@ a {
 	padding-left: 15px;
 	font-size: 24px;
 	background-color: $nav-bg-color;
+	overflow:auto;
 	a {
 		color: white;
 	}
@@ -84,6 +85,7 @@ a {
 	z-index: 3;
 	top: 70px;
 	left: 50%;
+	color: gray;
 	opacity: 0.8;
 	a {
 		$a: 150px;
