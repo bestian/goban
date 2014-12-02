@@ -214,6 +214,10 @@ a {
 	overflow-y: auto;
 	margin-top : 12px;
 
+	&.hidden {
+		width:0%;
+	}
+
 	#goban-sectionTitle {
 		margin-left: 15px;
 	}
