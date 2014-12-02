@@ -113,10 +113,16 @@
           url: this.path + folderName + '.csv',
           dataType: "text"
         }).success(function(data){
-          var config;
+          var config, res$, i$, to$, ridx$;
           config = goban.parseConfigFromCSV(data);
           if (config.colMax) {
             goban.colMax = config.colMax;
+            res$ = [];
+            for (i$ = 0, to$ = goban.colMax; i$ <= to$; ++i$) {
+              ridx$ = i$;
+              res$.push(ridx$);
+            }
+            goban.myColumnIndex = res$;
           }
           if (config.icons && config.icons.length) {
             goban.icons = config.icons;
@@ -127,7 +133,10 @@
             });
             goban.myName = config.myName;
             goban.myK = goban.related.map(function(o, index){
-              return [o.name, index];
+              return {
+                name: o.n,
+                index: index
+              };
             }).filter(function(t){
               return t.name === goban.myName;
             }).map(function(t){

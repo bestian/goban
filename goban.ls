@@ -112,6 +112,8 @@ myGoban = ($http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 				
 					if config.colMax
 						goban.colMax = config.colMax
+						goban.myColumnIndex = [to goban.colMax]
+
 					if config.icons and config.icons.length
 						goban.icons = config.icons
 					if config.related and config.related.length
@@ -119,7 +121,7 @@ myGoban = ($http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 							.filter (o)->
 								o and o.n and o.t
 						goban.myName = config.myName
-						goban.myK = (goban.related.map (o,index) -> [o.name, index]
+						goban.myK = (goban.related.map (o,index) -> {name:o.n, index: index}
 												.filter (t) -> t.name == goban.myName
 												.map (t) -> t.index)[0]
 
