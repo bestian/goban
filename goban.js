@@ -83,8 +83,8 @@
       load: function(num){
         var folderName;
         num = num || 0;
-        if (this.related && this.related[0]) {
-          this.title = this.related[this.myK];
+        if (!this.title && this.related && this.related[0]) {
+          this.title = this.related[this.myK].t;
         }
         folderName = this.title + num;
         if (typeof this.folderNames === 'array') {
