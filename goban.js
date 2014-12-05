@@ -197,12 +197,15 @@
       parseFromCSV: function(csv){
         var allTextLines, maybeRedirect, bodyLines, goodList, lastFolderIndex, bestList;
         allTextLines = csv.split(/\r\n|\n/);
+        this.sectionTitle = allTextLines[1].split(',')[1];
         maybeRedirect = allTextLines[0].split(',')[0];
+        if (!this.sectionTitle && !maybeRedirect) {
+          maybeRedirect = this.path + this.title;
+        }
         if (maybeRedirect && maybeRedirect.substr(0, 1) !== '#') {
           goban.redirect(maybeRedirect);
           return;
         }
-        this.sectionTitle = allTextLines[1].split(',')[1];
         bodyLines = allTextLines.slice(2);
         goodList = bodyLines.map(function(text){
           text = text.replace(/(html|css|js|output),/g, '$1COMMA');

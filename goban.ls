@@ -124,7 +124,6 @@ myGoban = ($http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 						goban.myK = (goban.related.map (o,index) -> {name:o.n, index: index}
 												.filter (t) -> t.name == goban.myName
 												.map (t) -> t.index)[0]
-
 				.error !->
 					goban.sectionTitle = null
 					goban.data = []
@@ -181,12 +180,17 @@ myGoban = ($http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 
 		parseFromCSV : (csv) ->
 			allTextLines = csv.split(/\r\n|\n/)
+
+			@.sectionTitle = allTextLines[1].split(',')[1]
 			maybeRedirect = allTextLines[0].split(',')[0]
+
+			if !@.sectionTitle and !maybeRedirect
+				maybeRedirect = @.path + @.title
+
 			if maybeRedirect and (maybeRedirect.substr(0,1) != \#)
 				goban.redirect(maybeRedirect)
 				return
 
-			@.sectionTitle = allTextLines[1].split(',')[1]
 			bodyLines = allTextLines.slice(2)
 			goodList = bodyLines
 						.map (text) -> 
