@@ -100,6 +100,8 @@ myGoban = ($http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 					.success (data) !->
 						goban.data = goban.parseFromCSV data
 						goban.updateHash!
+
+						#angular.boradcast("goban:loaded")
 					.error !->
 						goban.sectionTitle = null
 						goban.data = []
@@ -124,6 +126,8 @@ myGoban = ($http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 						goban.myK = (goban.related.map (o,index) -> {name:o.n, index: index}
 												.filter (t) -> t.name == goban.myName
 												.map (t) -> t.index)[0]
+
+					#angular.boradcast("goban:loaded")
 				.error !->
 					goban.sectionTitle = null
 					goban.data = []
