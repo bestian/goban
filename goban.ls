@@ -57,18 +57,16 @@ myGoban = ($http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 	# moves
 		setI : (n) !->
 			if @.myI != n
-				@.loadPage!
-				$timeout (!-> 
-					goban.myI = n
-					goban.updateHash!
-					goban.load goban.myI),1000
+				@.loadPage! 
+				@.myI = n
+				@.updateHash!
+				@.load @.myI
 	
 		setJ : (n) !->	
 			if @.myJ != n
 				@.loadPage!
-				$timeout (!-> 
-					goban.myJ = n
-					goban.updateHash!),1000
+				@.myJ = n
+				@.updateHash!
 	
 		updateHash : !->
 			$hash.upDateFromArray [@.title, @.myI, @.myJ]
