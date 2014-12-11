@@ -17,7 +17,7 @@ myGobanAnimate = ->
 	})
 	GobanAnimate
 
-myGoban = ($http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
+myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 	goban = new Object;
 # mOdles
 	angular.extend(goban, {
@@ -57,23 +57,29 @@ myGoban = ($http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 	# moves
 		setI : (n) !->
 			if @.myI != n
-				@.loadPage! 
+				@.maybeDelay! 
 				@.myI = n
 				@.updateHash!
 				@.load @.myI
 	
 		setJ : (n) !->	
 			if @.myJ != n
-				@.loadPage!
+				@.maybeDelay!
 				@.myJ = n
 				@.updateHash!
 	
 		updateHash : !->
 			$hash.upDateFromArray [@.title, @.myI, @.myJ]
 
+	# broadcasts
+
+		cast : (eventName, arg)!->
+			broadcastName = 'goban.' + eventName
+			$rootScope.$broadcast(broadcastName, arg)
+
 
 	# loads
-		loadPage : !->
+		maybeDelay : !->
 			@.pageLoading = true
 			if goban.animate.delay	
 				$timeout (!-> goban.pageLoading = false),goban.animate.delay
@@ -98,11 +104,11 @@ myGoban = ($http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 					.success (data) !->
 						goban.data = goban.parseFromCSV data
 						goban.updateHash!
-
-						#angular.boradcast("goban:loaded")
+						goban.cast \loaded {p:'data'}
 					.error !->
 						goban.sectionTitle = null
 						goban.data = []
+						goban.cast \error {p:'data'}
 
 		loadConfig : !->
 			folderName = @.title + 'Config'
@@ -125,10 +131,11 @@ myGoban = ($http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 												.filter (t) -> t.name == goban.myName
 												.map (t) -> t.index)[0]
 
-					#angular.boradcast("goban:loaded")
+					goban.cast \loaded {p:'config'}
 				.error !->
 					goban.sectionTitle = null
 					goban.data = []
+					goban.cast \error {p:'config'}
 					console.log 'error:connot load webConfig'
 
 
@@ -171,15 +178,17 @@ myGoban = ($http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 			$http {method: "GET",url: url, dataType: "text"}
 					.success (data) !->
 						goban.data = goban.parseFromCSV data
+						goban.cast \loaded {p:'data', isRedirected: true}
 					.error !->
 						goban.sectionTitle = null
 						goban.data = []
+						goban.cast \error {p:'data', isRedirected: true, isBroken: true}
 
 		init : !->
-			@.load(@.myI)	
+			@.load(@.myI)
+			goban.cast \initialized {i: @.myI}
 			
 	#parSers
-
 		parseFromCSV : (csv) ->
 			allTextLines = csv.split(/\r\n|\n/)
 
@@ -255,7 +264,7 @@ myGoban = ($http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 				if goban.myI == goban.colMax + 1
 					goban.myI = 0
 				goban.updateHash!
-			@.loadPage!
+			@.maybeDelay!
 			@.load parseInt(@.myI) + n
 			if @.animate.delay
 				$timeout (goX n), @.animate.delay
@@ -271,7 +280,7 @@ myGoban = ($http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 				if goban.myJ == goban.data.length
 					goban.myJ = 0
 				goban.updateHash!
-			@.loadPage!
+			@.maybeDelay!
 			if @.animate.delay
 				$timeout (goY n), @.animate.delay
 			else 
@@ -329,5 +338,5 @@ myGoban = ($http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 
 angular.module 'goban' []
 	.factory '$hash' myHash
-	.factory '$goban' [\$http, \$sce, \$hash, \$timeout, \$window myGoban]
+	.factory '$goban' [\$rootScope, \$http, \$sce, \$hash, \$timeout, \$window myGoban]
 	.filter 'toIndex' toIndex
