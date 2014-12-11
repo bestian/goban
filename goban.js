@@ -4,6 +4,9 @@
   toIndex = function(){
     return function(list){
       var i$, to$, results$ = [];
+      if (!list) {
+        list = [];
+      }
       for (i$ = 0, to$ = list.length - 1; i$ <= to$; ++i$) {
         results$.push(i$);
       }

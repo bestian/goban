@@ -1,5 +1,7 @@
 toIndex = ->
 	(list)->
+		if (!list)
+			list = []
 		[to list.length-1]
 
 myHash = ->
