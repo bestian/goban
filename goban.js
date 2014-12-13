@@ -157,8 +157,6 @@
             p: 'config'
           });
         }).error(function(){
-          goban.sectionTitle = null;
-          goban.data = [];
           goban.cast('error', {
             p: 'config'
           });
@@ -249,10 +247,10 @@
           isClosed = false;
           if (!list[0]) {
             lastFolderIndex = index;
-            if (list[2] && list[2].search(/expand(.+)true/ > -1)) {
+            if (list[2] && list[2].search(/exp[ea]nd(.+)true/ > -1)) {
               isClosed = false;
             }
-            if (list[2] && list[2].search(/expand(.+)false/ > -1)) {
+            if (list[2] && list[2].search(/exp[ea]nd(.+)false/ > -1)) {
               isClosed = true;
             }
           } else {

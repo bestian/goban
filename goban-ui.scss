@@ -319,15 +319,18 @@ a {
 }
 
 
-@media screen and (min-width: 420px) {
+@media screen and (min-width: 420px) and (max-width: 820px) {
   #goban-side {
     width: 30%;
   }
   #goban-main {
     width: 70%;  
   }
+  #goban-keyBordCtrl {
+	display:none;
+  }
 }
-@media screen and (min-width: 820px) {
+@media screen and (min-width: 820px) and (max-width: 1024px) {
   #goban-side {
     width: 20%;
   }
