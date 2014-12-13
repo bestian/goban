@@ -301,6 +301,7 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 			$sce.trustAsResourceUrl(url)
 
 		getCurrentURL : ->
+			@.data = @.data or []
 			if @.data[@.myJ] && @.data[@.myJ].isBlank
 				$window.open(@.data[@.myJ].url)
 				@.data[@.myJ].isBlank = false
