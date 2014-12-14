@@ -327,16 +327,22 @@
           goX(n);
         }
       },
-      dy: function(n){
+      dy: function(n, isConnected){
         var goY;
         goY = function(n){
           goban.myJ = parseInt(goban.myJ);
           goban.myJ += n;
           if (goban.myJ === -1) {
             goban.myJ = goban.data.length - 1;
+            if (isConnected) {
+              goban.dx(-1);
+            }
           }
           if (goban.myJ === goban.data.length) {
             goban.myJ = 0;
+            if (isConnected) {
+              goban.dx(1);
+            }
           }
           goban.updateHash();
         };
