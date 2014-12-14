@@ -92,7 +92,7 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 		load : (num) !->
 			num = num or 0
 
-			if !@.title and @.related and @.related[0]
+			if @.related and @.related[0]
 				@.title = @.related[@.myK].t
 
 			folderName = @.title + num
@@ -255,7 +255,7 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 			case 39 then @.dx 1
 			case 32 then @.data[@.myJ].isClosed = !@.data[@.myJ].isClosed
 
-		dx : (n) !->
+		dx : (n,isLoop) !->
 			goX = (n) !-> 
 				goban.myI = parseInt(goban.myI)
 				goban.myI += n
@@ -263,6 +263,8 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 					goban.myI = goban.colMax
 				if goban.myI == goban.colMax + 1
 					goban.myI = 0
+					if not isLoop
+						goban.dz(1)
 				goban.updateHash!
 			@.maybeDelay!
 			@.load parseInt(@.myI) + n
@@ -271,17 +273,17 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 			else
 				goX n
 
-		dy : (n, isConnected) !->
+		dy : (n, isLoop) !->
 			goY = (n) !-> 
 				goban.myJ = parseInt(goban.myJ)
 				goban.myJ += n
 				if goban.myJ == -1
-					goban.myJ = goban.data.length-1
-					if isConnected
+					goban.myJ = (goban.data.length or 1)-1
+					if not isLoop
 						goban.dx(-1)
-				if goban.myJ == goban.data.length
+				if goban.myJ >= goban.data.length
 					goban.myJ = 0
-					if isConnected
+					if not isLoop
 						goban.dx(1)
 				goban.updateHash!
 			@.maybeDelay!

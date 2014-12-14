@@ -87,7 +87,7 @@
       load: function(num){
         var folderName;
         num = num || 0;
-        if (!this.title && this.related && this.related[0]) {
+        if (this.related && this.related[0]) {
           this.title = this.related[this.myK].t;
         }
         folderName = this.title + num;
@@ -306,7 +306,7 @@
           this.data[this.myJ].isClosed = !this.data[this.myJ].isClosed;
         }
       },
-      dx: function(n){
+      dx: function(n, isLoop){
         var goX;
         goX = function(n){
           goban.myI = parseInt(goban.myI);
@@ -316,6 +316,9 @@
           }
           if (goban.myI === goban.colMax + 1) {
             goban.myI = 0;
+            if (!isLoop) {
+              goban.dz(1);
+            }
           }
           goban.updateHash();
         };
@@ -327,20 +330,20 @@
           goX(n);
         }
       },
-      dy: function(n, isConnected){
+      dy: function(n, isLoop){
         var goY;
         goY = function(n){
           goban.myJ = parseInt(goban.myJ);
           goban.myJ += n;
           if (goban.myJ === -1) {
-            goban.myJ = goban.data.length - 1;
-            if (isConnected) {
+            goban.myJ = (goban.data.length || 1) - 1;
+            if (!isLoop) {
               goban.dx(-1);
             }
           }
-          if (goban.myJ === goban.data.length) {
+          if (goban.myJ >= goban.data.length) {
             goban.myJ = 0;
-            if (isConnected) {
+            if (!isLoop) {
               goban.dx(1);
             }
           }
