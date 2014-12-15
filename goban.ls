@@ -95,14 +95,10 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 			if @.related and @.related[0]
 				@.title = @.related[@.myK].t
 
-			folderName = @.title + num
-			if typeof @.folderNames == \array
-				folderName = @.folderNames[num]
-
 			if @.webConfig
-				@.loadConfig!
+				@.loadConfig num
 
-			$http {method: "GET",url: this.path + folderName + '.csv',dataType: "text"}
+			$http {method: "GET",url: @.path + @.title + num + '.csv',dataType: "text"}
 					.success (data) !->
 						goban.data = goban.parseFromCSV data
 						goban.updateHash!
@@ -114,7 +110,8 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 
 		loadConfig : !->
 			folderName = @.title + 'Config'
-			$http {method: "GET",url: this.path + folderName + '.csv',dataType: "text"}
+			console.log(goban.path + goban.title + 'Config.csv')
+			$http {method: "GET",url: goban.path + goban.title + 'Config.csv',dataType: "text"}
 				.success (data) !->
 					config = goban.parseConfigFromCSV data
 				
@@ -122,8 +119,8 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 						goban.colMax = config.colMax
 						goban.myColumnIndex = [to goban.colMax]
 
-					if config.icons and config.icons.length
-						goban.icons = config.icons
+				#	if config.icons and config.icons.length
+				#		goban.icons = config.icons
 					if config.related and config.related.length
 						goban.related = config.related
 							.filter (o)->
@@ -143,8 +140,8 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 			ans  = {
 				myName: \Goban,
 				colMax: 3,
-				icons: [], # [{n: 'haha', url: 'bar.jpg'}, 
-							# {n: 'hoho'm url: 'foo.csv'}]
+			#	icons: [], # [{n: 'haha', url: 'bar.jpg'}, 
+			#				# {n: 'hoho'm url: 'foo.csv'}]
 				related: [],  # [{n: 'BT前端', t:'bt_frontend'},
 								# {n:'BT數學', t:'bt_math'}]
 			}
@@ -152,14 +149,14 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 			allTextLines = csv.split(/\r\n|\n/)
 
 			xAlts = (allTextLines[1] or "").split(',').slice(2)
-			xIcons = (allTextLines[2] or "").split(',').slice(2)
+		#	xIcons = (allTextLines[2] or "").split(',').slice(2)
 
 
 			ans.myName = allTextLines[1].split(',')[1]
-			ans.icons = xIcons
-							.map (u,index)->
-								{u: u,
-								n: xAlts[index]}
+		#	ans.icons = xIcons
+		#					.map (u,index)->
+		#						{u: u,
+		#						n: xAlts[index]}
 
 			zLines = allTextLines.slice(1)
 			
@@ -281,7 +278,7 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 					goban.myJ = (goban.data.length or 1)-1
 					if not isLoop
 						goban.dx(-1)
-				if goban.myJ >= goban.data.length
+				else if goban.myJ >= goban.data.length
 					goban.myJ = 0
 					if not isLoop
 						goban.dx(1)

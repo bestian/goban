@@ -85,21 +85,16 @@
         }
       },
       load: function(num){
-        var folderName;
         num = num || 0;
         if (this.related && this.related[0]) {
           this.title = this.related[this.myK].t;
         }
-        folderName = this.title + num;
-        if (typeof this.folderNames === 'array') {
-          folderName = this.folderNames[num];
-        }
         if (this.webConfig) {
-          this.loadConfig();
+          this.loadConfig(num);
         }
         $http({
           method: "GET",
-          url: this.path + folderName + '.csv',
+          url: this.path + this.title + num + '.csv',
           dataType: "text"
         }).success(function(data){
           goban.data = goban.parseFromCSV(data);
@@ -118,9 +113,10 @@
       loadConfig: function(){
         var folderName;
         folderName = this.title + 'Config';
+        console.log(goban.path + goban.title + 'Config.csv');
         $http({
           method: "GET",
-          url: this.path + folderName + '.csv',
+          url: goban.path + goban.title + 'Config.csv',
           dataType: "text"
         }).success(function(data){
           var config, res$, i$, to$, ridx$;
@@ -133,9 +129,6 @@
               res$.push(ridx$);
             }
             goban.myColumnIndex = res$;
-          }
-          if (config.icons && config.icons.length) {
-            goban.icons = config.icons;
           }
           if (config.related && config.related.length) {
             goban.related = config.related.filter(function(o){
@@ -164,23 +157,15 @@
         });
       },
       parseConfigFromCSV: function(csv){
-        var ans, allTextLines, xAlts, xIcons, zLines;
+        var ans, allTextLines, xAlts, zLines;
         ans = {
           myName: 'Goban',
           colMax: 3,
-          icons: [],
           related: []
         };
         allTextLines = csv.split(/\r\n|\n/);
         xAlts = (allTextLines[1] || "").split(',').slice(2);
-        xIcons = (allTextLines[2] || "").split(',').slice(2);
         ans.myName = allTextLines[1].split(',')[1];
-        ans.icons = xIcons.map(function(u, index){
-          return {
-            u: u,
-            n: xAlts[index]
-          };
-        });
         zLines = allTextLines.slice(1);
         ans.related = zLines.map(function(l){
           return {
@@ -340,8 +325,7 @@
             if (!isLoop) {
               goban.dx(-1);
             }
-          }
-          if (goban.myJ >= goban.data.length) {
+          } else if (goban.myJ >= goban.data.length) {
             goban.myJ = 0;
             if (!isLoop) {
               goban.dx(1);
