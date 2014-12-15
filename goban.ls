@@ -92,8 +92,6 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 		load : (num) !->
 			num = num or 0
 
-			if @.related and @.related[0]
-				@.title = @.related[@.myK].t
 
 			if @.webConfig
 				@.loadConfig num
@@ -293,6 +291,8 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 		dz : (n) !->
 			goZ = (o,n) !-> 
 				o.myK += n
+				if @.related and @.related[0]
+					@.title = @.related[@.myK].t
 				o.load!
 
 			if @.animate.delay
