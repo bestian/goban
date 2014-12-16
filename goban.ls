@@ -19,7 +19,7 @@ myGobanAnimate = ->
 	})
 	GobanAnimate
 
-myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
+myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 	goban = new Object;
 # mOdles
 	angular.extend(goban, {
@@ -73,6 +73,10 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 		updateHash : !->
 			$hash.upDateFromArray [@.title, @.myI, @.myJ]
 
+
+		updateIndex : !->
+			@.myColumnIndex = [to @.colMax]
+
 	# broadcasts
 
 		cast : (eventName, arg)!->
@@ -115,7 +119,7 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 				
 					if config.colMax
 						goban.colMax = config.colMax
-						goban.myColumnIndex = [to goban.colMax]
+						goban.updateIndex!
 
 				#	if config.icons and config.icons.length
 				#		goban.icons = config.icons
@@ -256,6 +260,11 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 				goban.myI += n
 				if goban.myI == -1
 					goban.myI = goban.colMax
+				if goban.myI == goban.colMax
+					if not goban.hasLimit
+						goban.colMax++
+						goban.updateIndex!
+
 				if goban.myI == goban.colMax + 1
 					goban.myI = 0
 					if not isLoop
@@ -306,7 +315,7 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 		getCurrentURL : ->
 			@.data = @.data or []
 			if @.data[@.myJ] && @.data[@.myJ].isBlank
-				$window.open(@.data[@.myJ].url)
+				window.open(@.data[@.myJ].url)
 				@.data[@.myJ].isBlank = false
 				return
 			@.trust((@.data[@.myJ] && @.data[@.myJ].url) or (@.data[@.myJ+1] && @.data[@.myJ+1].url))
@@ -331,7 +340,8 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 		$default : (obj)->
 			angular.extend(this,obj)
 			@.title = $hash.asArray![0] or @.title
-			angular.extend(this,{myColumnIndex : [to goban.colMax]})
+			goban.updateIndex!
+
 			if location.hash.split('&')[0].replace('#','')
 				goban.title = location.hash.split('&')[0].replace('#','')
 			this
@@ -342,5 +352,5 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout, $window) ->
 
 angular.module 'goban' []
 	.factory '$hash' myHash
-	.factory '$goban' [\$rootScope, \$http, \$sce, \$hash, \$timeout, \$window myGoban]
+	.factory '$goban' [\$rootScope, \$http, \$sce, \$hash, \$timeout, myGoban]
 	.filter 'toIndex' toIndex
