@@ -113,9 +113,10 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 		loadConfig : !->
 			folderName = @.title + 'Config'
 			console.log(goban.path + goban.title + 'Config.csv')
-			$http {method: "GET",url: goban.path + goban.title + 'Config.csv',dataType: "text"}
+			$http {method: "GET",url: goban.path + goban.title + 'Config.csv.json',dataType: "text"}
 				.success (data) !->
-					config = goban.parseConfigFromCSV data
+					config = goban.parseConfigFromJSON data
+				#	config = goban.parseConfigFromCSV data
 				
 					if config.colMax
 						goban.colMax = config.colMax
@@ -137,6 +138,19 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 					goban.cast \error {p:'config'}
 					console.log 'error:connot load webConfig'
 
+		parseConfigFromJSON : (data) ->
+			ans  = {
+				myName: \Goban,
+				colMax: data[0][1] or 3,
+				related: [],  
+			}
+
+			ans.related = data.slice(1)
+								.filter (l)->
+									l[0]
+								.map (l)->
+									{t: l[0], n:l[1] or l[0]}
+			ans
 
 		parseConfigFromCSV : (csv) ->
 			ans  = {
