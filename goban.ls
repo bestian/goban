@@ -63,12 +63,14 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 				@.myI = n
 				@.updateHash!
 				@.load @.myI
+				goban.cast \dx {d: 0, p: goban.myI}
 	
 		setJ : (n) !->	
 			if @.myJ != n
 				@.maybeDelay!
 				@.myJ = n
 				@.updateHash!
+				goban.cast \dy {d: 0, p: goban.myJ}
 	
 		updateHash : !->
 			$hash.upDateFromArray [@.title, @.myI, @.myJ]
@@ -290,6 +292,7 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 				$timeout (goX n), @.animate.delay
 			else
 				goX n
+			goban.cast \dx {d: n, p: goban.myI}
 
 		dy : (n, isLoop) !->
 			goY = (n) !-> 
@@ -309,6 +312,8 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 				$timeout (goY n), @.animate.delay
 			else 
 				goY n
+
+			goban.cast \dy {d: n, p: goban.myJ}
 
 
 		dz : (n) !->
