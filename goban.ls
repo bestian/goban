@@ -118,9 +118,9 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 					config = goban.parseConfigFromJSON data
 				#	config = goban.parseConfigFromCSV data
 				
-					if config.colMax
-						goban.colMax = config.colMax
-						goban.updateIndex!
+				#	if config.colMax
+				#		goban.colMax = config.colMax
+				#		goban.updateIndex!
 
 				#	if config.icons and config.icons.length
 				#		goban.icons = config.icons
@@ -141,7 +141,7 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 		parseConfigFromJSON : (data) ->
 			ans  = {
 				myName: \Goban,
-				colMax: data[0][1] or 3,
+		#		colMax: data[0][1] or 3,
 				related: [],  
 			}
 
@@ -155,7 +155,7 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 		parseConfigFromCSV : (csv) ->
 			ans  = {
 				myName: \Goban,
-				colMax: 3,
+			#	colMax: 3,
 			#	icons: [], # [{n: 'haha', url: 'bar.jpg'}, 
 			#				# {n: 'hoho'm url: 'foo.csv'}]
 				related: [],  # [{n: 'BT前端', t:'bt_frontend'},
