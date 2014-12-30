@@ -147,11 +147,21 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 				related: [],  
 			}
 
-			ans.related = data.slice(1)
-								.filter (l)->
-									l[0]
-								.map (l)->
-									{t: l[0], n:l[1] or l[0]}
+			myD = data.slice(1)
+
+			myC = ''
+			myR = []
+
+			for s in myD
+				if s[1] and (not s[0])
+					myC := s[1]
+				else if s[0]
+					myR.push(
+						t: s[0],
+						n: s[1] or s[0],
+						c: myC)
+
+			ans.related = myR
 			ans
 
 		parseConfigFromCSV : (csv) ->
@@ -232,18 +242,29 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 							isClosed = false
 							if not list[0]
 								lastFolderIndex := index
-								if list[2] and list[2].search /exp[ea]nd(.+)true/ > -1
+								if list[2] and (list[2].search /exp[ea]nd(.+)true/ > -1 
+										or list[2].search /open/ > -1)
 									isClosed = false
-								if list[2] and list[2].search /exp[ea]nd(.+)false/ > -1
+								if list[2] and (list[2].search /exp[ea]nd(.+)false/ > -1
+										or list[2].search /close/ > -1)
 									isClosed = true
 							else
-								if list[2] && list[2].search(/target(.+)_blank/ > -1)
+								if list[2] && list[2].search(/blank/ > -1)
 									isBlank = true
-								if list[2] && list[2].search(/isolate(.+)true/ > -1)
-									isIsolate = true
+#	if list[2] && list[2].search(/target(.+)_blank/ > -1)
+							#		isBlank = true
+								if list[2] && list[2].search(/iso/ > -1)  # isolated
+									isIsolated = true
+
 
 							obj = (list[0]
-							and {url: list[0].replace(/["\s]/g, ''), name: list[1].replace(/["\s]/g, ''), isFolder: false, pIndex: lastFolderIndex, isBlank: isBlank, isIsolate: isIsolate})
+							and {
+							url: list[0].replace(/["\s]/g, ''),
+							name: list[1].replace(/["\s]/g, ''),
+							isFolder: false,
+							pIndex: lastFolderIndex,
+							isBlank: isBlank,
+							isIsolated: isIsolated})
 								or { name: list[1], isFolder: true, isClosed: isClosed}
 
 							obj
@@ -270,12 +291,13 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 			case 39 then @.dx 1
 			case 32 then @.data[@.myJ].isClosed = !@.data[@.myJ].isClosed
 
-		dx : (n,isLoop) !->
+		dx : (myN,isLoop) !->
 			goX = (n) !-> 
 				goban.myI = parseInt(goban.myI)
 				goban.myI += n
 				if goban.myI == -1
 					goban.myI = goban.colMax
+					myN := 0
 				if goban.myI == goban.colMax
 					if not goban.hasLimit
 						goban.colMax++
@@ -283,15 +305,16 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 
 				if goban.myI == goban.colMax + 1
 					goban.myI = 0
-					if not isLoop
+					myN := 0
+					if not goban.isLoop
 						goban.dz(1)
 				goban.updateHash!
-			@.maybeDelay!
-			@.load parseInt(@.myI) + n
+				goban.maybeDelay!
+				goban.load goban.myI
 			if @.animate.delay
-				$timeout (goX n), @.animate.delay
+				$timeout (goX myN), @.animate.delay
 			else
-				goX n
+				goX myN
 			goban.cast \dx {d: n, p: goban.myI}
 
 		dy : (n, isLoop) !->

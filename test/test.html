@@ -7,10 +7,7 @@
 
 <body ng-controller = "ctrl">
 
-<select ng-model = "goban.title"
-        ng-change = "goban.load()"
-        ng-options = "o.t as o.n for o in goban.related">  
-</select>
+<select ng-model="goban.title" ng-options="o.t as o.n group by o.c for o in goban.related" ng-change="goban.load()"></select>
 
 
 <i ng-repeat = "r in goban.icons">  
@@ -30,6 +27,10 @@
   </li>
 </ul>
 
+<hr>
+
+{{goban.related}}
+
 
 <script type="text/javascript" src = "../bower_components/angular/angular.min.js"></script>  
 
@@ -42,7 +43,7 @@
 function myCtrl ($scope,$goban) {
   $scope.goban = $goban.$default({
     webConfig: true,
-    title: 'bt_frontend'
+    title: 'goban_test'
   });
 
   $goban.init();
