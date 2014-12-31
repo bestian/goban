@@ -231,9 +231,7 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 			goodList = bodyLines
 						.map (text) -> 
 							text = text.replace(/(html|css|js|output),/g, '$1COMMA')
-							text.split \,
-								.map (str)->
-									str.replace(/COMMA/g,',')
+							text.split(/COMMA|,/)
 						.filter (list) -> list[1]
 
 			lastFolderIndex = 0

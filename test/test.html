@@ -21,9 +21,13 @@
 
 <hr/>
 
+{{goban.data}}
+
+<hr/>
+
 <ul>
   <li ng-repeat = "d in goban.data">
-    {{d.name}}
+    {{d}}
   </li>
 </ul>
 
@@ -36,20 +40,7 @@
 
 <script type="text/javascript" src = "../goban.js"></script>  
 
-<script type="text/javascript">
-  angular.module("testApp",["goban"])
-    .controller("ctrl",myCtrl);
-
-function myCtrl ($scope,$goban) {
-  $scope.goban = $goban.$default({
-    webConfig: true,
-    title: 'goban_test'
-  });
-
-  $goban.init();
-}
-
-</script>
+<script type="text/javascript" src = "./test.js"></script>
 
 
 </body>
