@@ -94,14 +94,7 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 			else 
 				@.pageLoading = false
 	
-
-		load : (num) !->
-			num = num or 0
-
-
-			if @.webConfig
-				@.loadConfig num
-
+		loadCore:(num) !->
 			$http {method: "GET",url: @.path + @.title + num + '.csv',dataType: "text"}
 					.success (data) !->
 						goban.data = goban.parseFromCSV data
@@ -111,6 +104,18 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 						goban.sectionTitle = null
 						goban.data = []
 						goban.cast \error {p:'data'}
+
+		load : (num) !->
+			num = num or 0
+
+			if @.webConfig
+				@.loadConfig num
+
+			@.loadCore num
+
+		loadDataOnly:(num) ->
+			num = num or 0
+			@.loadCore num
 
 		loadConfig : !->
 			folderName = @.title + 'Config'
@@ -348,6 +353,7 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 				$timeout (goZ @ n),@.animate.delay
 			else 
 				goZ n
+			goban.cast \dz {d: n, p: goban.title}
 
 		trust : (url)->
 			$sce.trustAsResourceUrl(url)
