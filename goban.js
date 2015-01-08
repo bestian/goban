@@ -125,7 +125,7 @@
         if (this.webConfig) {
           this.loadConfig(num);
         }
-        this.loadCore(num);
+        goban.loadCore(num);
       },
       loadDataOnly: function(num){
         num = num || 0;
@@ -282,6 +282,7 @@
           obj = (list[0] && {
             url: list[0].replace(/["\s]/g, ''),
             name: list[1].replace(/["\s]/g, ''),
+            labels: (list[3] || "").replace(/["\s]/g, '').split('+'),
             isFolder: false,
             pIndex: lastFolderIndex,
             isBlank: isBlank,

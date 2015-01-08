@@ -111,7 +111,7 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 			if @.webConfig
 				@.loadConfig num
 
-			@.loadCore num
+			goban.loadCore num
 
 		loadDataOnly:(num) ->
 			num = num or 0
@@ -264,6 +264,7 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 							and {
 							url: list[0].replace(/["\s]/g, ''),
 							name: list[1].replace(/["\s]/g, ''),
+							labels: (list[3] or "").replace(/["\s]/g, '').split(\+),
 							isFolder: false,
 							pIndex: lastFolderIndex,
 							isBlank: isBlank,
