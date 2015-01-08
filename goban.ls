@@ -95,8 +95,10 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 				@.pageLoading = false
 	
 		loadCore:(num) !->
+			# TODO: 改為get .csv.json
 			$http {method: "GET",url: @.path + @.title + num + '.csv',dataType: "text"}
 					.success (data) !->
+						#TODO .改為parseDataFromJSON
 						goban.data = goban.parseFromCSV data
 						goban.updateHash!
 						goban.cast \loaded {p:'data'}
@@ -217,8 +219,13 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 		init : !->
 			@.load(@.myI)
 			goban.cast \initialized {i: @.myI}
+		
+	#Parsers
+		parseDataFromJSON : (d) ->
+			void
+	
 			
-	#parSers
+	#Parsers
 		parseFromCSV : (csv) ->
 			allTextLines = csv.split(/\r\n|\n/)
 
