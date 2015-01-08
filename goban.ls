@@ -95,11 +95,12 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 				@.pageLoading = false
 	
 		loadCore:(num) !->
-			# TODO: 改為get .csv.json
-			$http {method: "GET",url: @.path + @.title + num + '.csv',dataType: "text"}
+			# url = @.path + @.title + num + '.csv'
+			url = @.path + @.title + num + '.csv.json'
+			$http {method: "GET",url: url, dataType: "text"}
 					.success (data) !->
 						#TODO .改為parseDataFromJSON
-						goban.data = goban.parseFromCSV data
+						goban.data = goban.parseDataFromJSON data
 						goban.updateHash!
 						goban.cast \loaded {p:'data'}
 					.error !->
@@ -121,7 +122,6 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 
 		loadConfig : !->
 			folderName = @.title + 'Config'
-			console.log(goban.path + goban.title + 'Config.csv')
 			$http {method: "GET",url: goban.path + goban.title + 'Config.csv.json',dataType: "text"}
 				.success (data) !->
 					config = goban.parseConfigFromJSON data
@@ -206,10 +206,12 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 
 		redirect : (url) !->
 			if url.indexOf(".csv") == -1
-				url += '.csv'
+			#	url += '.csv'
+				url += '.csv.json'
 			$http {method: "GET",url: url, dataType: "text"}
 					.success (data) !->
-						goban.data = goban.parseFromCSV data
+						#改為 .csv.json
+						goban.data = goban.parseDataFromJSON data
 						goban.cast \loaded {p:'data', isRedirected: true}
 					.error !->
 						goban.sectionTitle = null
@@ -222,10 +224,53 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 		
 	#Parsers
 		parseDataFromJSON : (d) ->
-			void
+			@.sectionTitle = d[1][1]
+			maybeRedirect = d[0][0]
+			if !@.sectionTitle and !maybeRedirect
+				maybeRedirect = @.path + @.title
+			if maybeRedirect and (maybeRedirect.substr(0,1) != \#)
+				goban.redirect(maybeRedirect)
+				return
+
+			bodyArrays = d.slice(2)
+			goodList = bodyArrays
+						.filter (list) -> list[1]
+
+			lastFolderIndex = 0
+
+			bestList = goodList.map (list,index) ->
+							isClosed = false
+							if not list[0]
+								lastFolderIndex := index
+								if list[2] and (list[2].search /exp[ea]nd(.+)true/ > -1 
+										or list[2].search /open/ > -1)
+									isClosed = false
+								if list[2] and (list[2].search /exp[ea]nd(.+)false/ > -1
+										or list[2].search /close/ > -1)
+									isClosed = true
+							else
+								if list[2] && list[2].search(/blank/ > -1)
+									isBlank = true
+								if list[2] && list[2].search(/iso/ > -1)  # isolated
+									isIsolated = true
+
+
+							obj = (list[0]
+							and {
+							url: list[0].replace(/["\s]/g, ''),
+							name: list[1].replace(/["\s]/g, ''),
+							labels: (list[3] or "").replace(/["\s]/g, '').split(\+),
+							isFolder: false,
+							pIndex: lastFolderIndex,
+							isBlank: isBlank,
+							isIsolated: isIsolated})
+								or { name: list[1], isFolder: true, isClosed: isClosed}
+
+							obj
+			bestList
 	
 			
-	#Parsers
+		# expired function
 		parseFromCSV : (csv) ->
 			allTextLines = csv.split(/\r\n|\n/)
 
