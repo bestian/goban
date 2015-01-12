@@ -224,8 +224,8 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 		
 	#Parsers
 		parseDataFromJSON : (d) ->
-			@.sectionTitle = d[1][1]
-			maybeRedirect = d[0][0]
+			@.sectionTitle = ((d or [])[1] or [])[1]
+			maybeRedirect = ((d or [])[0] || [])[0]
 			if !@.sectionTitle and !maybeRedirect
 				maybeRedirect = @.path + @.title
 			if maybeRedirect and (maybeRedirect.substr(0,1) != \#)
