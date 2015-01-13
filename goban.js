@@ -262,17 +262,17 @@
           isClosed = false;
           if (!list[0]) {
             lastFolderIndex = index;
-            if (list[2] && (list[2].search(/exp[ea]nd(.+)true/ > -1) || list[2].search(/open/ > -1))) {
+            if (list[2] && (list[2].search(/exp[ea]nd(.+)true/) > -1 || list[2].search(/open/) > -1)) {
               isClosed = false;
             }
-            if (list[2] && (list[2].search(/exp[ea]nd(.+)false/ > -1) || list[2].search(/close/ > -1))) {
+            if (list[2] && (list[2].search(/exp[ea]nd(.+)false/ > -1) || list[2].search(/close/) > -1)) {
               isClosed = true;
             }
           } else {
-            if (list[2] && list[2].search(/blank/ > -1)) {
+            if (list[2] && list[2].search(/blank/) > -1) {
               isBlank = true;
             }
-            if (list[2] && list[2].search(/iso/ > -1)) {
+            if (list[2] && list[2].search(/iso/) > -1) {
               isIsolated = true;
             }
           }
@@ -410,11 +410,11 @@
           goX(myN);
         }
         goban.cast('dx', {
-          d: n,
+          d: myN,
           p: goban.myI
         });
       },
-      dy: function(n, isLoop){
+      dy: function(myN, isLoop){
         var goY;
         goY = function(n){
           goban.myJ = parseInt(goban.myJ);
@@ -434,12 +434,12 @@
         };
         this.maybeDelay();
         if (this.animate.delay) {
-          $timeout(goY(n), this.animate.delay);
+          $timeout(goY(myN), this.animate.delay);
         } else {
           goY(n);
         }
         goban.cast('dy', {
-          d: n,
+          d: myN,
           p: goban.myJ
         });
       },

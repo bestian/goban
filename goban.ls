@@ -242,16 +242,16 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 							isClosed = false
 							if not list[0]
 								lastFolderIndex := index
-								if list[2] and (list[2].search /exp[ea]nd(.+)true/ > -1 
-										or list[2].search /open/ > -1)
+								if list[2] and (list[2].search(/exp[ea]nd(.+)true/) > -1 
+										or list[2].search(/open/) > -1)
 									isClosed = false
 								if list[2] and (list[2].search /exp[ea]nd(.+)false/ > -1
-										or list[2].search /close/ > -1)
+										or list[2].search(/close/) > -1)
 									isClosed = true
 							else
-								if list[2] && list[2].search(/blank/ > -1)
+								if list[2] && list[2].search(/blank/) > -1
 									isBlank = true
-								if list[2] && list[2].search(/iso/ > -1)  # isolated
+								if list[2] && list[2].search(/iso/) > -1  # isolated
 									isIsolated = true
 
 
@@ -371,9 +371,9 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 				$timeout (goX myN), @.animate.delay
 			else
 				goX myN
-			goban.cast \dx {d: n, p: goban.myI}
+			goban.cast \dx {d: myN, p: goban.myI}
 
-		dy : (n, isLoop) !->
+		dy : (myN, isLoop) !->
 			goY = (n) !-> 
 				goban.myJ = parseInt(goban.myJ)
 				goban.myJ += n
@@ -388,11 +388,11 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 				goban.updateHash!
 			@.maybeDelay!
 			if @.animate.delay
-				$timeout (goY n), @.animate.delay
+				$timeout (goY myN), @.animate.delay
 			else 
 				goY n
 
-			goban.cast \dy {d: n, p: goban.myJ}
+			goban.cast \dy {d: myN, p: goban.myJ}
 
 
 		dz : (n) !->
