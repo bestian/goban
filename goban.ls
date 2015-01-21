@@ -44,6 +44,7 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 
 	#sWitchs
 		webConfig: false,
+		useJSON: '.json',
 
 	#staTus
 		pageLoading : false,
@@ -96,11 +97,15 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 	
 		loadCore:(num) !->
 			# url = @.path + @.title + num + '.csv'
-			url = @.path + @.title + num + '.csv.json'
+			url = @.path + @.title + num + '.csv' + @.useJSON
 			$http {method: "GET",url: url, dataType: "text"}
 					.success (data) !->
 						#TODO .改為parseDataFromJSON
-						goban.data = goban.parseDataFromJSON data
+						if @.useJSON == '.json'
+							goban.data = goban.parseDataFromJSON data
+						else 
+							goban.data = goban.parseDataFromCSV data
+							
 						goban.updateHash!
 						goban.cast \loaded {p:'data'}
 					.error !->
@@ -122,7 +127,7 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 
 		loadConfig : !->
 			folderName = @.title + 'Config'
-			$http {method: "GET",url: goban.path + goban.title + 'Config.csv.json',dataType: "text"}
+			$http {method: "GET",url: goban.path + goban.title + 'Config.csv' + goban.useJSON, dataType: "text"}
 				.success (data) !->
 					config = goban.parseConfigFromJSON data
 				#	config = goban.parseConfigFromCSV data
@@ -206,8 +211,7 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 
 		redirect : (url) !->
 			if url.indexOf(".csv") == -1
-			#	url += '.csv'
-				url += '.csv.json'
+				url += '.csv' + goban.useJSON
 			$http {method: "GET",url: url, dataType: "text"}
 					.success (data) !->
 						#改為 .csv.json
@@ -270,8 +274,8 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 			bestList
 	
 			
-		# expired function
-		parseFromCSV : (csv) ->
+		# backup function
+		parseDataFromCSV : (csv) ->
 			allTextLines = csv.split(/\r\n|\n/)
 
 			@.sectionTitle = allTextLines[1].split(',')[1]
