@@ -101,7 +101,7 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 			$http {method: "GET",url: url, dataType: "text"}
 					.success (data) !->
 						#TODO .改為parseDataFromJSON
-						if @.useJSON == '.json'
+						if goban.useJSON == '.json'
 							goban.data = goban.parseDataFromJSON data
 						else 
 							goban.data = goban.parseDataFromCSV data
