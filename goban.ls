@@ -21,7 +21,7 @@ myGobanAnimate = ->
 
 myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 	goban = new Object;
-# mOdles
+# modles
 	angular.extend(goban, {
 	#	yAxis
 		data:[],
@@ -29,9 +29,11 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 		icons: [],
 	#	zAxis
 		related: [],
+	#	x-y
+		matrix:[[]],
 
 
-	#loaDer
+	#loader
 		path : 'https://ethercalc.org/',
 		title : $hash.asArray![0] or '',
 	
@@ -129,15 +131,12 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 			folderName = @.title + 'Config'
 			$http {method: "GET",url: goban.path + goban.title + 'Config.csv' + goban.useJSON, dataType: "text"}
 				.success (data) !->
-					config = goban.parseConfigFromJSON data
-				#	config = goban.parseConfigFromCSV data
+					config = {}
+					if goban.useJSON == '.json'
+						config := goban.parseConfigFromJSON data
+					else 
+						config := goban.parseConfigFromCSV data
 				
-				#	if config.colMax
-				#		goban.colMax = config.colMax
-				#		goban.updateIndex!
-
-				#	if config.icons and config.icons.length
-				#		goban.icons = config.icons
 					if config.related and config.related.length
 						goban.related = config.related
 							.filter (o)->
@@ -155,12 +154,13 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 		parseConfigFromJSON : (data) ->
 			ans  = {
 				myName: \Goban,
-		#		colMax: data[0][1] or 3,
 				related: [],  
 			}
 
-			myD = data.slice(1)
+			if data and data[1]
+				ans.myName := data.[1][1] or data.[1][0]
 
+			myD = data.slice(1)
 			myC = ''
 			myR = []
 
@@ -179,7 +179,6 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 		parseConfigFromCSV : (csv) ->
 			ans  = {
 				myName: \Goban,
-			#	colMax: 3,
 			#	icons: [], # [{n: 'haha', url: 'bar.jpg'}, 
 			#				# {n: 'hoho'm url: 'foo.csv'}]
 				related: [],  # [{n: 'BT前端', t:'bt_frontend'},
@@ -189,15 +188,9 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 			allTextLines = csv.split(/\r\n|\n/)
 
 			xAlts = (allTextLines[1] or "").split(',').slice(2)
-		#	xIcons = (allTextLines[2] or "").split(',').slice(2)
-
+		
 
 			ans.myName = allTextLines[1].split(',')[1]
-		#	ans.icons = xIcons
-		#					.map (u,index)->
-		#						{u: u,
-		#						n: xAlts[index]}
-
 			zLines = allTextLines.slice(1)
 			
 
@@ -214,7 +207,6 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 				url += '.csv' + goban.useJSON
 			$http {method: "GET",url: url, dataType: "text"}
 					.success (data) !->
-						#改為 .csv.json
 						goban.data = goban.parseDataFromJSON data
 						goban.cast \loaded {p:'data', isRedirected: true}
 					.error !->
