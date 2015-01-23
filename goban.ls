@@ -43,20 +43,14 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 		myK : 0,
 		colMax : 3,
 		myColumnIndex : [0,1,2,3],
-
-	#sWitchs
 		webConfig: false,
 		useJSON: '.json',
-
-	#staTus
 		pageLoading : false,
-
-	#roBot
 		animate : $GobanAnimate,
 
 	})
 
-# methOds
+# methods
 	angular.extend(goban,{
 
 	# moves
@@ -82,8 +76,12 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 		updateIndex : !->
 			@.myColumnIndex = [to @.colMax]
 
+	# get
+		getSectionTitle : (i)->
+			console.log(@.matrix)
+			@.matrix and @.matrix[i] and @.matrix[i].sectionTitle
+	
 	# broadcasts
-
 		cast : (eventName, arg)!->
 			broadcastName = 'goban.' + eventName
 			$rootScope.$broadcast(broadcastName, arg)
@@ -96,24 +94,40 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 				$timeout (!-> goban.pageLoading = false),goban.animate.delay
 			else 
 				@.pageLoading = false
+
+		loadMatrix: !->
+			for k in @.myColumnIndex
+				url = @.path + @.title + k + '.csv' + @.useJSON
+				$http {method: "GET",url: url, dataType: "text"}
+					.success (data) !->
+						if goban.useJSON == '.json'
+							goban.matrix[k] = goban.parseDataFromJSON data
+						else 
+							goban.matrix[k] = goban.parseDataFromCSV data
+							
+						goban.cast \loaded {p:'matrix'}
+					.error !->
+						goban.cast \error {p:'matrix'}
+
 	
 		loadCore:(num) !->
-			# url = @.path + @.title + num + '.csv'
 			url = @.path + @.title + num + '.csv' + @.useJSON
 			$http {method: "GET",url: url, dataType: "text"}
 					.success (data) !->
-						#TODO .改為parseDataFromJSON
 						if goban.useJSON == '.json'
 							goban.data = goban.parseDataFromJSON data
 						else 
 							goban.data = goban.parseDataFromCSV data
-							
+						
+						goban.matrix[goban.myI] = angular.copy(goban.data)
 						goban.updateHash!
 						goban.cast \loaded {p:'data'}
+					#	goban.loadMatrix!
 					.error !->
 						goban.sectionTitle = null
 						goban.data = []
 						goban.cast \error {p:'data'}
+			
 
 		load : (num) !->
 			num = num or 0
@@ -122,6 +136,7 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 				@.loadConfig num
 
 			goban.loadCore num
+	#		goban.loadMatrix!
 
 		loadDataOnly:(num) ->
 			num = num or 0
@@ -220,6 +235,7 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 		
 	#Parsers
 		parseDataFromJSON : (d) ->
+			# TODO: 將sectionTitle改成傳回值而非副作用
 			@.sectionTitle = ((d or [])[1] or [])[1]
 			maybeRedirect = ((d or [])[0] || [])[0]
 			if !@.sectionTitle and !maybeRedirect
@@ -268,6 +284,7 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 			
 		# backup function
 		parseDataFromCSV : (csv) ->
+			# TODO: 將sectionTitle改成傳回值而非副作用
 			allTextLines = csv.split(/\r\n|\n/)
 
 			@.sectionTitle = allTextLines[1].split(',')[1]
@@ -302,8 +319,6 @@ myGoban = ($rootScope, $http, $sce, $hash, $GobanAnimate, $timeout) ->
 							else
 								if list[2] && list[2].search(/blank/ > -1)
 									isBlank = true
-#	if list[2] && list[2].search(/target(.+)_blank/ > -1)
-							#		isBlank = true
 								if list[2] && list[2].search(/iso/ > -1)  # isolated
 									isIsolated = true
 
